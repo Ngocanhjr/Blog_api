@@ -2,6 +2,6 @@
 - Spring web
 - Lombok
 - Spring security
-- Srping data MongoDB
+- Spring data MongoDB
 - Spring Boot DevTools
-- Validatio
+- Validation
