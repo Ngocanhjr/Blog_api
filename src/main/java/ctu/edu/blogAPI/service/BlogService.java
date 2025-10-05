@@ -17,7 +17,7 @@ public class BlogService {
     private BlogRepository blogRepository;
 
     public Blog initBlog(CreateBlogRequest request, ObjectId id) {
-        Blog blog = Blog.builder()
+        Blog  blog = Blog.builder()
                 .authorId(id)
                 .content(request.getContent())
                 .createAt(Instant.now())
