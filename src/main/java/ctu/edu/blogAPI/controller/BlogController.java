@@ -3,6 +3,8 @@ package ctu.edu.blogAPI.controller;
 import ctu.edu.blogAPI.dto.CreateBlogRequest;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.service.BlogService;
+import jakarta.validation.Valid;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 public class BlogController {
 
     @Autowired
-    BlogService blogService;
+    private BlogService blogService;
 
     @PostMapping("/post")
-    public ResponseEntity<Blog> createBlog(@RequestBody CreateBlogRequest request){
+    public ResponseEntity<Blog> createBlog(@RequestBody @Valid CreateBlogRequest request){
 
         ObjectId authorObjId = new ObjectId(request.getAuthorId()); // convert String -> ObjectId
         return new ResponseEntity<Blog>(blogService.initBlog(request,authorObjId),HttpStatus.CREATED);
