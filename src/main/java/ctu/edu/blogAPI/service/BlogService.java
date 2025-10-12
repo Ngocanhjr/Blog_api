@@ -1,6 +1,6 @@
 package ctu.edu.blogAPI.service;
 
-import ctu.edu.blogAPI.dto.CreateBlogRequest;
+import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.repository.BlogRepository;
 import lombok.Builder;
