@@ -1,4 +1,4 @@
-package ctu.edu.blogAPI.dto;
+package ctu.edu.blogAPI.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
