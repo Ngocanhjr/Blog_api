@@ -2,13 +2,18 @@ package ctu.edu.blogAPI.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
+import ctu.edu.blogAPI.dto.request.UserUpdateRequest;
+import ctu.edu.blogAPI.dto.response.UserRespone;
 import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.service.UserService;
 import jakarta.validation.Valid;
@@ -25,6 +30,7 @@ import lombok.experimental.FieldDefaults;
 public class UserController {
     UserService userService;
 
+    // tạo user
     @PostMapping
     User createUsuer(@RequestBody @Valid UserCreationRequest request) {
         return userService.createUser(request);
@@ -34,5 +40,24 @@ public class UserController {
     // lấy all các user
     List<User> getUList() {
         return userService.getUsers();
+    }
+
+    // tìm user theo id
+    @GetMapping("/{userId}")
+    UserRespone getUser(@PathVariable("userId") String userId) {
+        return userService.getUser(userId);
+    }
+
+    @PutMapping("/{userId}")
+    // câp nhập thông tin user dựa trên userId
+    UserRespone updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+        return userService.updateUser(userId, request);
+    }
+
+    @DeleteMapping("/{userId}")
+    // xóa user dựa trên Id
+    String deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        return "User has been deleted.";
     }
 }

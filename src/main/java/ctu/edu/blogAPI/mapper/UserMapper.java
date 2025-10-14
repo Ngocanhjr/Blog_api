@@ -1,8 +1,10 @@
 package ctu.edu.blogAPI.mapper;
 
 import org.mapstruct.*;
+
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequest;   // <-- nhớ import
+import ctu.edu.blogAPI.dto.response.UserRespone;
 import ctu.edu.blogAPI.entities.User;
 
 @Mapper(componentModel = "spring",
@@ -14,4 +16,7 @@ public interface UserMapper {
 
     // Update: map các field != null từ request vào entity hiện có
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    // mapping từ UserUpdateRequest vào user
+    UserRespone toUserRespone(User user);
 }

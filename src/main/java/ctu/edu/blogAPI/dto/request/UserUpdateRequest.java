@@ -2,6 +2,8 @@ package ctu.edu.blogAPI.dto.request;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +18,16 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE) // ko cần khai khai báo các phạm vi của biến
 
 public class UserUpdateRequest {
+    @NotBlank(message = "Tên tài khoản không được để trống")
+    @Size(min = 3, message = "username must be at least 3 character!!!")
     String username;
+
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, message = "password must be at least 8 character!!!")
     String password;
+
     String fullname;
+    
     LocalDate dob;
+
 }
