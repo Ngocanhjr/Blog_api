@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -53,7 +54,7 @@ public class Blog {
     private Set<ObjectId> sharers;
 
     //vì ảnh có thể trùng, có thứ tự
-//    private List<String> imgIds;??
+    private List<String> imgUrls;
 
     //List Comment
 }

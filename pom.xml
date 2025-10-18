@@ -77,6 +77,13 @@
 			<version>2.5.4</version>
 		</dependency>
 
+		<!--Add by author: rhna-->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.33.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
