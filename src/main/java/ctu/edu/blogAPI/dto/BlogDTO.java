@@ -13,12 +13,10 @@ public class BlogDTO {
     private ObjectId id;
     private String content;
     private List<String> imageUrls;
-    private String authorId;
-    private String authorName;
-    private String authorAvatar;
+    private String userId;
+//    private String userName; cần không ?
     private int likeCount;
     private int commentCount;
     private int shareCount;
-
     private Instant createdAt;
 }

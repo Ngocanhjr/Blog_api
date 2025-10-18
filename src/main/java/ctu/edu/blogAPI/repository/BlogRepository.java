@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface BlogRepository extends MongoRepository<Blog, ObjectId> {
-    List<Blog> findByAuthorId(ObjectId authorId);
+    List<Blog> findByUserId(ObjectId authorId);
 }
