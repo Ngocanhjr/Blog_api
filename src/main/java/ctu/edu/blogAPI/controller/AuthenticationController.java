@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ctu.edu.blogAPI.dto.request.AuthenticationRequest;
+import ctu.edu.blogAPI.dto.response.ApiResponse;
 import ctu.edu.blogAPI.dto.response.AuthenticationRespone;
 import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.service.AuthenticationService;
@@ -20,6 +21,17 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
     AuthenticationService authenticationService;
+
+    @PostMapping("/log-in")
+    ApiResponse<AuthenticationRespone> authenicate(@RequestBody AuthenticationRequest request) {
+        boolean result = authenticationService.authentication(request);
+        return ApiResponse.<AuthenticationRespone>builder()
+                .result(AuthenticationRespone.builder()
+                        .authentication(result)
+                        .build())
+                .build();
+
+    }
 
     @PostMapping("/login")
     public boolean login(@RequestBody @Valid AuthenticationRequest request) {
