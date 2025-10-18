@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.AccessLevel;
@@ -27,6 +29,9 @@ public class UserService {
         if (userRepository.existsByUsername(request.getUsername()))
             throw new RuntimeException("user existed!!!");
         User user = userMapper.toUser(request);
+        // mã hóa password
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(user);
     }
 
