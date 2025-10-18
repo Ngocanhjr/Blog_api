@@ -1,14 +1,15 @@
 package ctu.edu.blogAPI.service;
 
-import ctu.edu.blogAPI.dto.CreateBlogRequest;
+import ctu.edu.blogAPI.dto.BlogDTO;
+import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.repository.BlogRepository;
-import lombok.Builder;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class BlogService {
@@ -26,5 +27,9 @@ public class BlogService {
 
 
         return blogRepository.save(blog);
+    }
+
+    public List<Blog> getAllBlogsByAuthor(ObjectId authorId) {
+        return blogRepository.findByAuthorId(authorId);
     }
 }
