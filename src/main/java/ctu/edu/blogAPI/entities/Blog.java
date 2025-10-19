@@ -25,6 +25,8 @@ public class Blog {
 
     private ObjectId userId;
 
+    private String userName;
+
 //    @DBRef
 //    private User author;
 

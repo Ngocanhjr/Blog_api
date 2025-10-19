@@ -11,10 +11,10 @@ import java.util.List;
 @Builder
 public class BlogDTO {
     private ObjectId id;
+    private String userId;
     private String content;
     private List<String> imageUrls;
-    private String userId;
-//    private String userName; cần không ?
+    private String userName;
     private int likeCount;
     private int commentCount;
     private int shareCount;
