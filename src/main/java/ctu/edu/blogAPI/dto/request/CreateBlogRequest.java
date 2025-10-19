@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-@Builder
+ @Builder
 public class CreateBlogRequest {
     private String userId;
     private String content;

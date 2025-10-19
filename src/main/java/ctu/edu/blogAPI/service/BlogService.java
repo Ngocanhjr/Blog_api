@@ -1,8 +1,10 @@
 package ctu.edu.blogAPI.service;
 
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
+import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
 import ctu.edu.blogAPI.entities.Blog;
+import ctu.edu.blogAPI.mapper.BlogMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -65,5 +67,12 @@ public class BlogService {
 //    Cần đổi thành dạng response gióng bên trên ??
     public List<Blog> getAllBlogsByAuthor(ObjectId userId) {
         return blogRepository.findByUserId(userId);
+    }
+
+    //Get details of blog by blogId
+    public BlogDetailsResponse getBlogDetails(String blogId) {
+        Blog blog = blogRepository.findById(new ObjectId(blogId)) //return Optional;
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+        return BlogMapper.toBlogDetails(blog);
     }
 }

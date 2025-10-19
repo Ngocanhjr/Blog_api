@@ -1,6 +1,7 @@
 package ctu.edu.blogAPI.controller;
 
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
+import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.service.BlogService;
@@ -23,21 +24,34 @@ public class BlogController {
     //Get all blogs by userId
     //Sẽ đổi blog thành class dto
     @GetMapping("users/{userId}/blogs")
-    public List<Blog> getAllBlogs(@PathVariable String userId) {
+    public List<Blog> allBlogsByAuthor(@PathVariable String userId) {
         return blogService.getAllBlogsByAuthor(new ObjectId(userId));
     }
 
+    //Get all blogs for new feed
+
+    //Get details of blog by blogId - done
+    @GetMapping("/blogs/{blogId}")
+    public ResponseEntity<BlogDetailsResponse> blogDetails(@PathVariable String blogId){
+        BlogDetailsResponse response = blogService.getBlogDetails(blogId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    //ver1
     //Create blogs
     //Sẽ đổi blog thành class dto
 //    @PostMapping("/blogs")
 //    public ResponseEntity<Blog> createBlog(@RequestBody CreateBlogRequest request){
 //        return new ResponseEntity<Blog>(blogService.initBlog(request),HttpStatus.CREATED);
 //    }
+
+    //ver2 - done
     @PostMapping(value = "/blogs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CreateBlogResponse> createBlog(@ModelAttribute CreateBlogRequest request) {
+        public ResponseEntity<CreateBlogResponse> createBlog(@ModelAttribute CreateBlogRequest request) {
         CreateBlogResponse response = blogService.initBlog(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 //Dùng @ModelAttribute thay vì @RequestBody để upload file (multipart/form-data).
+
 
 }
