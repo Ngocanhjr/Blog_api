@@ -12,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateBlogResponse {
-    private String blogId;
+    private String blogId; //Response trả về sẽ là một chuỗi
+
     private List<String> successUrls;
     private List<String> failedFiles;
 }

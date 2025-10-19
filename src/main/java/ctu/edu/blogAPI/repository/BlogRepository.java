@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface BlogRepository extends MongoRepository<Blog, ObjectId> {
     List<Blog> findByUserId(ObjectId authorId);
+//    List<Post> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
+//    List<Post> findByAuthorOrderByCreatedAtDesc(User author);
+//    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
