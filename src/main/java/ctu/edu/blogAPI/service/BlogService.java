@@ -1,5 +1,4 @@
 package ctu.edu.blogAPI.service;
-
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
@@ -64,7 +63,7 @@ public class BlogService {
                 .build();
     }
 
-//    Cần đổi thành dạng response gióng bên trên ??
+    //    Cần đổi thành dạng response gióng bên trên ??
     public List<Blog> getAllBlogsByAuthor(ObjectId userId) {
         return blogRepository.findByUserId(userId);
     }
