@@ -18,7 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "blogs")
+@Document(collection = "blogs") //Dùng cho MongoDB để ánh xạ lớp Java thành tài liệu (document) trong collection MongoDB. - xem nó như là 1 cái table trong DBMS
 public class Blog {
     @Id
     private ObjectId id;
