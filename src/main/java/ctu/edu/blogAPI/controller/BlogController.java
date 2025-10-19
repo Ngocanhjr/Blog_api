@@ -23,7 +23,7 @@ public class BlogController {
 
     //Get all blogs by userId
     //Sẽ đổi blog thành class dto
-    @GetMapping("users/{userId}/blogs")
+    @GetMapping("/users/{userId}/blogs")
     public List<Blog> allBlogsByAuthor(@PathVariable String userId) {
         return blogService.getAllBlogsByAuthor(new ObjectId(userId));
     }
