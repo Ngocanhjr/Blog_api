@@ -11,14 +11,12 @@ import java.util.List;
 @Builder
 public class BlogDTO {
     private ObjectId id;
+    private String userId;
     private String content;
     private List<String> imageUrls;
-    private String authorId;
-    private String authorName;
-    private String authorAvatar;
+    private String userName;
     private int likeCount;
     private int commentCount;
     private int shareCount;
-
     private Instant createdAt;
 }
