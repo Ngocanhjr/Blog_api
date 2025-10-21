@@ -1,11 +1,11 @@
 package ctu.edu.blogAPI.controller;
 
+import ctu.edu.blogAPI.dto.BlogDTO;
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.service.BlogService;
-import jakarta.validation.Valid;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +24,24 @@ public class BlogController {
     @Autowired
     private BlogService blogService;
 
+    //Get all blog to new feed
+//    @GetMapping("/")
+//    public List<BlogDTO> getAllBlogs{
+//
+//    }
+
     // Get all blogs by userId
     // Sẽ đổi blog thành class dto
     @GetMapping("/users/{userId}/blogs")
-    public List<Blog> allBlogsByAuthor(@PathVariable String userId) {
-        return blogService.getAllBlogsByAuthor(new ObjectId(userId));
+    public List<BlogDTO> getAllBlogsByAuthor(@PathVariable String userId) {
+        return blogService.getAllBlogsByAuthor(userId);
     }
 
     // Get all blogs for new feed
 
     // Get details of blog by blogId - done
     @GetMapping("/blogs/{blogId}")
-    public ResponseEntity<BlogDetailsResponse> blogDetails(@PathVariable String blogId) {
+    public ResponseEntity<BlogDetailsResponse> getBlogDetails(@PathVariable String blogId) {
         BlogDetailsResponse response = blogService.getBlogDetails(blogId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
