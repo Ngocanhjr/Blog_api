@@ -25,10 +25,11 @@ public class BlogController {
     private BlogService blogService;
 
     //Get all blog to new feed
-//    @GetMapping("/")
-//    public List<BlogDTO> getAllBlogs{
-//
-//    }
+    @GetMapping("/soulspaces")
+    //Dieu kien blog phai public
+    public List<BlogDTO> getAllBlogs(){
+        return blogService.getAllPublishedBlogs();
+    }
 
     // Get all blogs by userId
     // Sẽ đổi blog thành class dto
@@ -36,8 +37,6 @@ public class BlogController {
     public List<BlogDTO> getAllBlogsByAuthor(@PathVariable String userId) {
         return blogService.getAllBlogsByAuthor(userId);
     }
-
-    // Get all blogs for new feed
 
     // Get details of blog by blogId - done
     @GetMapping("/blogs/{blogId}")
@@ -59,6 +58,11 @@ public class BlogController {
     // ver2 - done
     @PostMapping(value = "/blogs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateBlogResponse> createBlog(@ModelAttribute CreateBlogRequest request) {
+//        // ✅ Kiểm tra userId có tồn tại trong database không
+//        boolean exists = userRepository.existsById(userId);
+//        if (!exists) {
+//            throw new ResourceNotFoundException("User not found with id: " + userId);
+//        }
         CreateBlogResponse response = blogService.initBlog(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
