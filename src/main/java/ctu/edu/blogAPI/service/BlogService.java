@@ -1,4 +1,5 @@
 package ctu.edu.blogAPI.service;
+import ctu.edu.blogAPI.dto.BlogDTO;
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
@@ -49,7 +50,7 @@ public class BlogService {
         Blog blog = Blog.builder()
                 .userId(new ObjectId(request.getUserId())) // convert String -> ObjectId
                 .content(request.getContent())
-                .imgUrls(successUrls)
+                .imageContentUrls(successUrls)
                 .createAt(Instant.now())
                 .updateAt(Instant.now())
                 .build();
@@ -64,8 +65,11 @@ public class BlogService {
     }
 
     //    Cần đổi thành dạng response gióng bên trên ??
-    public List<Blog> getAllBlogsByAuthor(ObjectId userId) {
-        return blogRepository.findByUserId(userId);
+    public List<BlogDTO> getAllBlogsByAuthor(String userId) {
+        List<Blog> blogs= blogRepository.findByUserId(new ObjectId(userId));
+        return blogs.stream()
+                .map(BlogMapper::toBlogDTO)
+                .toList(); //ánh xạ từng phần tử
     }
 
     //Get details of blog by blogId
