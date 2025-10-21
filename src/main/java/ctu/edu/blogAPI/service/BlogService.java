@@ -36,7 +36,8 @@ public class BlogService {
     //ver2
     public CreateBlogResponse initBlog(CreateBlogRequest request) {
 //        cần tối ưu vì trùng với controller của FileUpload
-        List<MultipartFile> files = new ArrayList<>(request.getFiles());
+        //Fix error NullPointerException when list null
+        List<MultipartFile> files = request.getFiles() != null ? request.getFiles() : List.of(); //get file or create empty file
         List<String> successUrls = new ArrayList<>();
         List<String> failedFiles = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -51,6 +52,7 @@ public class BlogService {
                 .userId(new ObjectId(request.getUserId())) // convert String -> ObjectId
                 .content(request.getContent())
                 .imageContentUrls(successUrls)
+                .published(request.isPublished())
                 .createAt(Instant.now())
                 .updateAt(Instant.now())
                 .build();
@@ -64,12 +66,18 @@ public class BlogService {
                 .build();
     }
 
-    //    Cần đổi thành dạng response gióng bên trên ??
     public List<BlogDTO> getAllBlogsByAuthor(String userId) {
         List<Blog> blogs= blogRepository.findByUserId(new ObjectId(userId));
         return blogs.stream()
                 .map(BlogMapper::toBlogDTO)
                 .toList(); //ánh xạ từng phần tử
+    }
+
+    //get all blogs - newfeed
+    public List<BlogDTO> getAllPublishedBlogs(){
+        List<Blog> blogs = blogRepository.findByPublishedTrue();
+        return blogs.stream().map(BlogMapper::toBlogDTO)
+                .toList();
     }
 
     //Get details of blog by blogId
