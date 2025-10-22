@@ -11,6 +11,8 @@ public class CreateBlogRequest {
     private String userId;
 //    @Size(max = 10, message = "vượt quá 10 ký tự!!!")
     private String content;
+
     private boolean published;
+
     private List<MultipartFile> files;
 }
