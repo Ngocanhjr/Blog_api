@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,12 +23,19 @@ public class Blog {
     @Id
     private ObjectId id;
 
-    private ObjectId authorId;
+    private ObjectId userId;
+
+    private String userName;
+
+    private String userAvatarUrl;
 
 //    @DBRef
 //    private User author;
 
     private String content;
+
+    //vì ảnh có thể trùng, có thứ tự
+    private List<String> imageContentUrls;
 
     private Long likesCount = 0L; //tránh null khi insert.
 
@@ -37,7 +43,7 @@ public class Blog {
 
     private Long sharesCount = 0L;
 
-    private boolean isPublished = true;
+    private boolean published = true;
 
     @CreatedDate
     private Instant createAt;
@@ -52,8 +58,7 @@ public class Blog {
 
     private Set<ObjectId> sharers;
 
-    //vì ảnh có thể trùng, có thứ tự
-//    private List<String> imgIds;??
+
 
     //List Comment
 }

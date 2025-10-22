@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Document(collection = "User")
+@Document(collection = "user")
 @Data
 @Builder
 @NoArgsConstructor
