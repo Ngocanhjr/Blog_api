@@ -5,27 +5,15 @@
 - Spring data MongoDB
 - Spring Boot DevTools
 - Validation
-## API endpoint
 
-### Blog
+## Using swagger
+Go to: https://editor.swagger.io/ , import file `.yaml` and then test api
 
-`/api/v1` : prefix
+- Also can install extension OpenApi in vscode to run this
 
-- `/blogs/{authorId}` : get all blogs by authorId (@PathVariable String authorId)
--  `/post`: create new post (@RequestBody CreateBlogRequest request)
+### Export `.yaml`
 
-**Test upload file**
+http://localhost:8080/v3/api-docs.yaml
 
-- `/upload` : upload file (img, video) to cloudinary
-
-## DTO
-
-### CreateBlogRequest
-
-```java
-public class CreateBlogRequest {
-    private String authorId;
-    private String content;
-    private List<MultipartFile> imageUrls;
-}
-```
+### Backend
+Run code and go to: http://localhost:8080/swagger-ui/index.html to test API
