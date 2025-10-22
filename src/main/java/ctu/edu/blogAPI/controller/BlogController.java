@@ -4,10 +4,7 @@ import ctu.edu.blogAPI.dto.BlogDTO;
 import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
 import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
-import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.service.BlogService;
-
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
 public class BlogController {
@@ -69,4 +67,13 @@ public class BlogController {
     // Dùng @ModelAttribute thay vì @RequestBody để upload file
     // (multipart/form-data).
 
+//    @DeleteMapping("/blogs/{blogId}")
+//    public ResponseEntity<String> deleteBlog(@PathVariable String blogId){
+//        //check role before delete
+////        if (!blog.getUserId().equals(currentUserId)) {
+////            throw new UnauthorizedException("Bạn không có quyền sửa/xoá bài viết này");
+////        }
+//        blogService.deleteBlog(blogId);
+//        return ResponseEntity.ok("Blog deleted successfully");
+//    }
 }
