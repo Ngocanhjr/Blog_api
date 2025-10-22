@@ -27,10 +27,15 @@ public class Blog {
 
     private String userName;
 
+    private String userAvatarUrl;
+
 //    @DBRef
 //    private User author;
 
     private String content;
+
+    //vì ảnh có thể trùng, có thứ tự
+    private List<String> imageContentUrls;
 
     private Long likesCount = 0L; //tránh null khi insert.
 
@@ -38,7 +43,7 @@ public class Blog {
 
     private Long sharesCount = 0L;
 
-    private boolean isPublished = true;
+    private boolean published = true;
 
     @CreatedDate
     private Instant createAt;
@@ -53,8 +58,7 @@ public class Blog {
 
     private Set<ObjectId> sharers;
 
-    //vì ảnh có thể trùng, có thứ tự
-    private List<String> imgUrls;
+
 
     //List Comment
 }
