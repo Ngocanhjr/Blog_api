@@ -22,18 +22,19 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Test"),
-        },
-        security = {
-                @SecurityRequirement(name = "bearerAuth")
         }
+//        ,
+//        security = {
+//                @SecurityRequirement(name = "bearerAuth")
+//        }
 )
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        description = "JWT Bearer token authentication"
-)
+//@SecurityScheme(
+//        name = "bearerAuth",
+//        type = SecuritySchemeType.HTTP,
+//        scheme = "bearer",
+//        bearerFormat = "JWT",
+//        description = "JWT Bearer token authentication"
+//)
 public class OpenApiConfig {
     // Không cần thêm gì ở đây — chỉ khai báo annotation thôi
 }

@@ -1,0 +1,17 @@
+.openapi-generator-ignore
+Apis/AuthenticationControllerApi.md
+Apis/BlogControllerApi.md
+Apis/FileUploadControllerApi.md
+Apis/UserControllerApi.md
+Models/ApiResponseAuthenticationRespone.md
+Models/AuthenticationRequest.md
+Models/AuthenticationRespone.md
+Models/BlogDTO.md
+Models/BlogDetailsResponse.md
+Models/CreateBlogResponse.md
+Models/User.md
+Models/UserCreationRequest.md
+Models/UserRespone.md
+Models/UserUpdateRequest.md
+Models/uploadFile_request.md
+README.md
