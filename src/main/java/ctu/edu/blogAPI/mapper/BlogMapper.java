@@ -1,7 +1,9 @@
 package ctu.edu.blogAPI.mapper;
 
 import ctu.edu.blogAPI.dto.BlogDTO;
+import ctu.edu.blogAPI.dto.response.BlogAccessResponse;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
+import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
 import ctu.edu.blogAPI.entities.Blog;
 import lombok.Builder;
 import org.springframework.stereotype.Component;
@@ -52,5 +54,14 @@ public class BlogMapper {
                 .build();
     }
 
+    public static BlogAccessResponse toBlogAccessResponse(Blog blog) {
+        if (blog == null)
+            return null;
+        return BlogAccessResponse.builder()
+                .blogId(blog.getId().toString())
+                .published(blog.isPublished())
+                .updateAt(blog.getUpdateAt())
+                .build();
+    }
 
 }
