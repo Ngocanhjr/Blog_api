@@ -23,7 +23,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthenticationController {
-
     AuthenticationService authenticationService;
 
     @PostMapping("/log-in")
@@ -34,35 +33,11 @@ public class AuthenticationController {
                         .authentication(result)
                         .build())
                 .build();
+
     }
 
-    // API login có lưu session để FE (React) giữ trạng thái đăng nhập
     @PostMapping("/login")
-    public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest request, HttpSession session) {
-        boolean result = authenticationService.authentication(request);
-
-        if (result) {
-            session.setAttribute("user", request.getUsername());
-        }
-        // Không trả thông báo, chỉ trả true/false
-        return ApiResponse.<Boolean>builder()
-                .result(result)
-                .build();
-    }
-
-    // API kiểm tra xem người dùng đã đăng nhập chưa
-    @GetMapping("/check-session")
-    public ApiResponse<?> checkSession(HttpSession session) {
-        String user = (String) session.getAttribute("user");
-        if (user != null) {
-            return ApiResponse.builder()
-                    .message("Đã đăng nhập")
-                    .result(user)
-                    .build();
-        } else {
-            return ApiResponse.builder()
-                    .message("Chưa đăng nhập")
-                    .build();
-        }
+    public boolean login(@RequestBody @Valid AuthenticationRequest request) {
+        return authenticationService.authentication(request);
     }
 }
