@@ -1,7 +1,6 @@
 package ctu.edu.blogAPI.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +38,19 @@ public class AuthenticationController {
     @PostMapping("/login")
     public boolean login(@RequestBody @Valid AuthenticationRequest request) {
         return authenticationService.authentication(request);
+    }
+
+        // API login có lưu session để FE (React) giữ trạng thái đăng nhập
+    @PostMapping("/loginv2")
+    public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest request, HttpSession session) {
+        boolean result = authenticationService.authentication(request);
+
+        if (result) {
+            session.setAttribute("user", request.getUsername());
+        }
+        // Không trả thông báo, chỉ trả true/false
+        return ApiResponse.<Boolean>builder()
+                .result(result)
+                .build();
     }
 }

@@ -24,6 +24,7 @@ public class UserService {
 
     UserRepository userRepository; // final -> được inject qua constructor
     UserMapper userMapper; // final -> được inject qua constructor
+    private final PasswordEncoder passwordEncoder; //  final -> được inject qua constructor
 
     public User createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername()))
@@ -46,12 +47,29 @@ public class UserService {
     }
 
     // update theo id (dùng MapStruct để bỏ qua null)
-    public UserRespone updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findAllById(userId)
-                .orElseThrow(() -> new RuntimeErrorException(null, "User not found")); // chỉ ghi đè field != null
-        userMapper.updateUser(user, request);
-        return userMapper.toUserRespone(userRepository.save(user));
+    // public UserRespone updateUser(String userId, UserUpdateRequest request) {
+    //     User user = userRepository.findAllById(userId)
+    //             .orElseThrow(() -> new RuntimeErrorException(null, "User not found")); // chỉ ghi đè field != null
+    //     userMapper.updateUser(user, request);
+    //     return userMapper.toUserRespone(userRepository.save(user));
+    // }
+
+  public UserRespone updateUser(String userId, UserUpdateRequest request) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // map các field khác, bỏ qua password
+    userMapper.updateUser(user, request);
+
+    // nếu có gửi mật khẩu mới -> mã hoá
+    if (request.getPassword() != null && !request.getPassword().isBlank()) {
+      // tránh double-hash: chỉ set khi khác hiện tại
+      if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        user.setPassword(passwordEncoder.encode(request.getPassword())); //  dùng biến
+      }
     }
+    return userMapper.toUserRespone(userRepository.save(user));
+  }
 
     public void deleteUser(String userId) {
         if (!userRepository.existsById(userId)) {
