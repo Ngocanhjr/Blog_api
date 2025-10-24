@@ -25,6 +25,8 @@ public class UserCreationRequest {
     @Size(min = 8, message = "password must be at least 8 character!!!")
 
     String password;
+    @NotBlank(message = "Tên tài khoản không được để trống")
+    @Size(min = 3, message = "username must be at least 3 character!!!")
     String fullname;
     LocalDate dob;
     

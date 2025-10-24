@@ -31,7 +31,7 @@ public class UserController {
     UserService userService;
 
     // tạo user
-    @PostMapping
+    @PostMapping("/sign-up")
     User createUsuer(@RequestBody @Valid UserCreationRequest request) {
         return userService.createUser(request);
     }
