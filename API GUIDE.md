@@ -17,3 +17,20 @@ http://localhost:8080/v3/api-docs.yaml
 
 ### Backend
 Run code and go to: http://localhost:8080/swagger-ui/index.html to test API
+
+
+### Create file
+
+**Method 1**
+```bash
+npm install -g openapi-markdown
+openapi-markdown -i openapi.json -o ./README.md
+
+```
+
+**Method 2**
+```bash
+npm install @openapitools/openapi-generator-cli -g
+openapi-generator-cli generate -i openapi.json -g markdown -o docs/
+
+```

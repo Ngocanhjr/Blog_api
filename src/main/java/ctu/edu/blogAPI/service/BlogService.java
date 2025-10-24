@@ -1,8 +1,12 @@
 package ctu.edu.blogAPI.service;
 import ctu.edu.blogAPI.dto.BlogDTO;
-import ctu.edu.blogAPI.dto.request.CreateBlogRequest;
+import ctu.edu.blogAPI.dto.request.BlogAccessRequest;
+import ctu.edu.blogAPI.dto.request.BlogCreateRequest;
+import ctu.edu.blogAPI.dto.request.BlogUpdateRequest;
+import ctu.edu.blogAPI.dto.response.BlogAccessResponse;
 import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
-import ctu.edu.blogAPI.dto.response.CreateBlogResponse;
+import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
+import ctu.edu.blogAPI.dto.response.BlogCreateResponse;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.mapper.BlogMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
@@ -34,7 +38,7 @@ public class BlogService {
 //    }
 
     //ver2
-    public CreateBlogResponse initBlog(CreateBlogRequest request) {
+    public BlogCreateResponse initBlog(BlogCreateRequest request) {
 //        cần tối ưu vì trùng với controller của FileUpload
         //Fix error NullPointerException when list null
         List<MultipartFile> files = request.getFiles() != null ? request.getFiles() : List.of(); //get file or create empty file
@@ -59,14 +63,15 @@ public class BlogService {
 
         Blog saved = blogRepository.save(blog);
 
-        return CreateBlogResponse.builder()
+        return BlogCreateResponse.builder()
                 .blogId(saved.getId().toString())
                 .successUrls(successUrls)
                 .failedFiles(failedFiles)
                 .build();
     }
 
-    public List<BlogDTO> getAllBlogsByAuthor(String userId) {
+    // Get all blogs by userId
+    public List<BlogDTO> getAllBlogsByUser(String userId) {
         List<Blog> blogs= blogRepository.findByUserId(new ObjectId(userId));
         return blogs.stream()
                 .map(BlogMapper::toBlogDTO)
@@ -80,10 +85,66 @@ public class BlogService {
                 .toList();
     }
 
+    //Get all public blog of user by userID
+    public List<BlogDTO> getAllPublicBlogByUserId(String userId) {
+        List<Blog> blogs = blogRepository.findByUserIdAndPublishedTrue(new ObjectId(userId));
+        return blogs.stream().map(BlogMapper::toBlogDTO).toList();
+    }
+
     //Get details of blog by blogId
     public BlogDetailsResponse getBlogDetails(String blogId) {
         Blog blog = blogRepository.findById(new ObjectId(blogId)) //return Optional;
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
         return BlogMapper.toBlogDetails(blog);
+    }
+
+    //Update access of blog
+    public BlogAccessResponse updateAccess(BlogAccessRequest request){
+        Blog blog = blogRepository.findById(new ObjectId(request.getBlogId()))
+                .orElseThrow(()->new RuntimeException("Blog not found"));
+
+        blog.setPublished(request.isPublished());
+        blog.setUpdateAt(Instant.now());
+        blogRepository.save(blog);
+
+        return BlogMapper.toBlogAccessResponse(blog);
+    }
+
+    //update content blog
+    public BlogUpdateResponse updateDetails(BlogUpdateRequest request){
+        Blog blog = blogRepository.findById(new ObjectId(request.getBlogId()))
+                .orElseThrow(()-> new RuntimeException("Blog not found"));
+
+        blog.setContent(request.getContent());
+        List<MultipartFile> files = request.getFiles() != null ? request.getFiles() : List.of(); //get file or create empty file
+        List<String> successUrls = new ArrayList<>();
+        List<String> failedFiles = new ArrayList<>();
+        if(files!=null){
+            for (MultipartFile file : files) {
+                try {
+                    successUrls.add(fileUpload.uploadFile(file));
+                } catch (Exception e) {
+                    failedFiles.add(file.getOriginalFilename());
+                }
+            }
+        }
+        blog.setUpdateAt(Instant.now());
+        blog.setImageContentUrls(successUrls);
+        blogRepository.save(blog);
+
+        return BlogUpdateResponse.builder()
+                .blogId(blog.getId().toString())
+                .content(blog.getContent())
+//                .files(blog.getImageContentUrls())
+                .successUrls(successUrls)
+                .failedFiles(failedFiles)
+                .updateAt(blog.getUpdateAt())
+                .build();
+    }
+    //Delete blog bt blogId
+    public void deleteBlog(String blogId) {
+        Blog blog = blogRepository.findById(new ObjectId(blogId))
+                .orElseThrow(() -> new RuntimeException("Blog not found"));
+        blogRepository.delete(blog);
     }
 }
