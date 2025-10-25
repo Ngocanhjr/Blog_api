@@ -26,5 +26,6 @@ public class User {
     String password;
     String fullname;
     LocalDate dob;
-    
+    String userAvatarUrl;
+
 }

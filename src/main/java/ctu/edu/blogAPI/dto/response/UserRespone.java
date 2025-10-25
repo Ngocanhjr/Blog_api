@@ -20,4 +20,6 @@ public class UserRespone {
     String password;
     String fullname;
     LocalDate dob;
+    String userAvatarUrl;
+
 }

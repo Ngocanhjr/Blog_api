@@ -1,7 +1,6 @@
 package ctu.edu.blogAPI.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthenticationController {
-
     AuthenticationService authenticationService;
 
     @PostMapping("/log-in")
@@ -34,10 +32,16 @@ public class AuthenticationController {
                         .authentication(result)
                         .build())
                 .build();
+
     }
 
-    // API login có lưu session để FE (React) giữ trạng thái đăng nhập
     @PostMapping("/login")
+    public boolean login(@RequestBody @Valid AuthenticationRequest request) {
+        return authenticationService.authentication(request);
+    }
+
+        // API login có lưu session để FE (React) giữ trạng thái đăng nhập
+    @PostMapping("/loginv2")
     public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest request, HttpSession session) {
         boolean result = authenticationService.authentication(request);
 
@@ -48,21 +52,5 @@ public class AuthenticationController {
         return ApiResponse.<Boolean>builder()
                 .result(result)
                 .build();
-    }
-
-    // API kiểm tra xem người dùng đã đăng nhập chưa
-    @GetMapping("/check-session")
-    public ApiResponse<?> checkSession(HttpSession session) {
-        String user = (String) session.getAttribute("user");
-        if (user != null) {
-            return ApiResponse.builder()
-                    .message("Đã đăng nhập")
-                    .result(user)
-                    .build();
-        } else {
-            return ApiResponse.builder()
-                    .message("Chưa đăng nhập")
-                    .build();
-        }
     }
 }
