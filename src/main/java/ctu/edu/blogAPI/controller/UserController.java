@@ -2,6 +2,7 @@ package ctu.edu.blogAPI.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController // là một annotation dùng để đánh dấu một lớp là Web Controller, nghĩa là lớp
                 // này sẽ nhận các request từ client (HTTP request) và trả về response (HTML,
                 // JSON, v.v.).
