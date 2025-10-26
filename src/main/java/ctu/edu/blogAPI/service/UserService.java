@@ -55,7 +55,10 @@ public class UserService {
     return userMapper.toUserResponse(userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("User not found")));
   }
-
+  public UserResponsePatch getUserPatch(String id) {
+    return userMapper.toResponsePatch(userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found")));
+  }
   // update theo id (dùng MapStruct để bỏ qua null)
   // public UserRespone updateUser(String userId, UserUpdateRequest request) {
   // User user = userRepository.findAllById(userId)
