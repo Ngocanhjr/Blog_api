@@ -15,7 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173")
 //@CrossOrigin(origins = "*")
@@ -86,8 +88,9 @@ public class BlogController {
     }
     //update content blog
     @PutMapping(value ="/blogs/details", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BlogUpdateResponse> updateBlogDetails(@ModelAttribute BlogUpdateRequest request){
-        BlogUpdateResponse response = blogService.updateDetails(request);
+    public ResponseEntity<BlogUpdateResponse> updateBlogDetails(@ModelAttribute BlogUpdateRequest request) throws IOException {
+//        BlogUpdateResponse response = blogService.updateDetails(request);
+        BlogUpdateResponse response = blogService.updateBlog(request);
         return ResponseEntity.ok(response);
     }
 
@@ -100,4 +103,15 @@ public class BlogController {
         blogService.deleteBlog(blogId);
         return ResponseEntity.ok("Blog deleted successfully");
     }
+
+    @PutMapping(value = "blogs-details", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> updatePost(@ModelAttribute BlogUpdateRequest request) {
+        try {
+            BlogUpdateResponse updated = blogService.updateBlog(request);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }
