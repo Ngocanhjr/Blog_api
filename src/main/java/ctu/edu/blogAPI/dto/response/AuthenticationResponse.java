@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRespone {
+public class AuthenticationResponse {
     Boolean authentication; // kiểm tra user có cung cấp mk đúng hay chưa
-
+    LoginUserResponse user;
 }
