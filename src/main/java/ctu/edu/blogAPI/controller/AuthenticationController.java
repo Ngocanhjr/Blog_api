@@ -1,5 +1,7 @@
 package ctu.edu.blogAPI.controller;
 
+import org.apache.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ctu.edu.blogAPI.dto.request.AuthenticationRequest;
 import ctu.edu.blogAPI.dto.response.ApiResponse;
-import ctu.edu.blogAPI.dto.response.AuthenticationRespone;
+import ctu.edu.blogAPI.dto.response.AuthenticationResponse;
 import ctu.edu.blogAPI.service.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -24,33 +26,42 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationController {
     AuthenticationService authenticationService;
 
+    // @PostMapping("/log-in")
+    // ApiResponse<AuthenticationResponse> authenicate(@RequestBody
+    // AuthenticationRequest request) {
+    // boolean result = authenticationService.authentication(request);
+    // return ApiResponse.<AuthenticationResponse>builder()
+    // .result(AuthenticationResponse.builder()
+    // .authentication(result)
+    // .build())
+    // .build();
+
+    // }
+
+    // @PostMapping("/login")
+    // public boolean login(@RequestBody @Valid AuthenticationRequest request) {
+    // return authenticationService.authentication(request);
+    // }
     @PostMapping("/log-in")
-    ApiResponse<AuthenticationRespone> authenicate(@RequestBody AuthenticationRequest request) {
-        boolean result = authenticationService.authentication(request);
-        return ApiResponse.<AuthenticationRespone>builder()
-                .result(AuthenticationRespone.builder()
-                        .authentication(result)
-                        .build())
-                .build();
-
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
+        var res = authenticationService.authentication(request);
+        return res.getAuthentication()
+                ? ResponseEntity.ok(res) // 200 { success:true, user:{id,username} }
+                : ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(res); // 401 { success:false, user:null }
     }
 
-    @PostMapping("/login")
-    public boolean login(@RequestBody @Valid AuthenticationRequest request) {
-        return authenticationService.authentication(request);
-    }
+    // // API login có lưu session để FE (React) giữ trạng thái đăng nhập
+    // @PostMapping("/loginv2")
+    // public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest
+    // request, HttpSession session) {
+    // boolean result = authenticationService.authentication(request);
 
-        // API login có lưu session để FE (React) giữ trạng thái đăng nhập
-    @PostMapping("/loginv2")
-    public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest request, HttpSession session) {
-        boolean result = authenticationService.authentication(request);
-
-        if (result) {
-            session.setAttribute("user", request.getUsername());
-        }
-        // Không trả thông báo, chỉ trả true/false
-        return ApiResponse.<Boolean>builder()
-                .result(result)
-                .build();
-    }
+    // if (result) {
+    // session.setAttribute("user", request.getUsername());
+    // }
+    // // Không trả thông báo, chỉ trả true/false
+    // return ApiResponse.<Boolean>builder()
+    // .result(result)
+    // .build();
+    // }
 }
