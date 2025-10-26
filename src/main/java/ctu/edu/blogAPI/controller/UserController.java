@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping
     // lấy all các user
-    List<User> getUList() {
+    List<UserResponse> getUList() {
         return userService.getUsers();
     }
 

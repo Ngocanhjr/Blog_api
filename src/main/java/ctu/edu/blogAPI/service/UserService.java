@@ -46,8 +46,8 @@ public class UserService {
     return userMapper.toUserResponse(savedUser);
   }
 
-  public List<User> getUsers() {
-    return userRepository.findAll();
+  public List<UserResponse> getUsers() {
+    return userMapper.toResponsesList(userRepository.findAll());
   }
 
   // lấy user theo id (bạn đang gọi hàm này ở updateUser)
