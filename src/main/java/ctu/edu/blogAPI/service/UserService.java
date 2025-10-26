@@ -86,12 +86,14 @@ public class UserService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
 
-    if (req.getFullname() != null)
-      user.setFullname(req.getFullname());
-    if (req.getUsername() != null)
-      user.setUsername(req.getUsername());
-    if (req.getUserAvatarUrl() != null)
-      user.setUserAvatarUrl(req.getUserAvatarUrl());
+    // if (req.getFullname() != null)
+    // user.setFullname(req.getFullname());
+    // if (req.getUsername() != null)
+    // user.setUsername(req.getUsername());
+    // if (req.getUserAvatarUrl() != null)
+    // user.setUserAvatarUrl(req.getUserAvatarUrl());
+    userMapper.updateUserPartial(user, req); // MapStruct tự bỏ qua field null
+    userRepository.save(user);
 
     return userMapper.toResponsePatch(user); // <— tên hàm đã chuẩn hóa
   }

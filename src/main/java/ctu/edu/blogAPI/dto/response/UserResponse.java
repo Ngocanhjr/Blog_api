@@ -21,5 +21,4 @@ public class UserResponse {
     String fullname;
     LocalDate dob;
     String userAvatarUrl;
-
 }
