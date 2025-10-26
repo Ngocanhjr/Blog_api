@@ -1,5 +1,6 @@
 package ctu.edu.blogAPI.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,6 +52,11 @@ public class UserController {
     @GetMapping("/{userId}")
     UserResponse getUser(@PathVariable("userId") String userId) {
         return userService.getUser(userId);
+    }
+    // tìm user theo id lấy vè username,fullname, dob, userAvatarUrl;
+    @GetMapping("/{userId}")
+    UserResponsePatch getUserPtach(@PathVariable("userId") String userId) {
+        return userService.getUserPatch(userId);
     }
 
     @PutMapping("/{userId}")
