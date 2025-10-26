@@ -4,6 +4,7 @@ import org.mapstruct.*;
 
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequest; // <-- nhớ import
+import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
 import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
 import ctu.edu.blogAPI.entities.User;
@@ -26,7 +27,7 @@ public interface UserMapper {
     // Cập nhật một phần: chỉ copy các field != null từ request vào entity
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "password", ignore = true) // không cho PATCH password ở đây
-    void updateUserPartial(@MappingTarget User user, UserUpdateRequest request);
+    void updateUserPartial(@MappingTarget User user, UserUpdateRequestPatch request);
 
     // Entity -> Response (cho PATCH)
     UserResponsePatch toResponsePatch(User user);
