@@ -3,6 +3,33 @@ This is the API documentation for Soul spaces project.
 
 ## Version: pre-v1
 
+### /api/v1/blogs/details
+
+#### PUT
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
+### /api/v1/blogs/access
+
+#### PUT
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
+### /api/v1/blogs-details
+
+#### PUT
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
 ### /api/users/{userId}
 
 #### GET
@@ -111,7 +138,25 @@ This is the API documentation for Soul spaces project.
 | ---- | ----------- |
 | 200 | OK |
 
-### /api/v1/users/{userId}/blogs
+### /auth/check-session
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
+### /api/v1/soulspaces
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
+### /api/v1/blogs/{userId}/blogs
 
 #### GET
 ##### Parameters
@@ -126,9 +171,15 @@ This is the API documentation for Soul spaces project.
 | ---- | ----------- |
 | 200 | OK |
 
-### /api/v1/soulspaces
+### /api/v1/blogs/{userId}/all
 
 #### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| userId | path |  | Yes | string |
+
 ##### Responses
 
 | Code | Description |
@@ -150,8 +201,73 @@ This is the API documentation for Soul spaces project.
 | ---- | ----------- |
 | 200 | OK |
 
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| blogId | path |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
+### /api/v1/delete
+
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| imgUrl | query |  | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+
 ### Models
 
+
+#### BlogUpdateRequest
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| blogId | string |  | No |
+| content | string |  | No |
+| newImages | [ binary ] |  | No |
+| removeImagesUrl | [ string ] |  | No |
+| published | boolean |  | No |
+
+#### BlogUpdateResponse
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| blogId | string |  | No |
+| content | string |  | No |
+| successUrls | [ string ] |  | No |
+| failedDeleteFiles | [ string ] |  | No |
+| failedUploadFiles | [ string ] |  | No |
+| published | boolean |  | No |
+| updateAt | dateTime |  | No |
+
+#### BlogAccessRequest
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| blogId | string |  | No |
+| published | boolean |  | No |
+
+#### BlogAccessResponse
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| blogId | string |  | No |
+| published | boolean |  | No |
+| updateAt | dateTime |  | No |
 
 #### UserUpdateRequest
 
@@ -179,6 +295,14 @@ This is the API documentation for Soul spaces project.
 | username | string |  | No |
 | password | string |  | No |
 
+#### ApiResponseBoolean
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| code | integer |  | No |
+| message | string |  | No |
+| result | boolean |  | No |
+
 #### ApiResponseAuthenticationRespone
 
 | Name | Type | Description | Required |
@@ -193,7 +317,7 @@ This is the API documentation for Soul spaces project.
 | ---- | ---- | ----------- | -------- |
 | authentication | boolean |  | No |
 
-#### CreateBlogRequest
+#### BlogCreateRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -202,7 +326,7 @@ This is the API documentation for Soul spaces project.
 | published | boolean |  | No |
 | files | [ binary ] |  | No |
 
-#### CreateBlogResponse
+#### BlogCreateResponse
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -229,6 +353,14 @@ This is the API documentation for Soul spaces project.
 | fullname | string |  | No |
 | dob | date |  | No |
 
+#### ApiResponseObject
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| code | integer |  | No |
+| message | string |  | No |
+| result |  |  | No |
+
 #### BlogDTO
 
 | Name | Type | Description | Required |
@@ -253,6 +385,7 @@ This is the API documentation for Soul spaces project.
 | id | string |  | No |
 | userId | string |  | No |
 | userName | string |  | No |
+| userAvatarUrl | string |  | No |
 | content | string |  | No |
 | imageUrls | [ string ] |  | No |
 | likeCount | long |  | No |
