@@ -18,7 +18,12 @@ public class BlogUpdateResponse {
     private String content;
 
     private List<String> successUrls;
-    private List<String> failedFiles;
+
+    private List<String> failedDeleteFiles;
+
+    private List<String> failedUploadFiles;
+
+    private Boolean published;
 
     private Instant updateAt;
 }

@@ -1,12 +1,10 @@
 package ctu.edu.blogAPI.service;
+
 import ctu.edu.blogAPI.dto.BlogDTO;
 import ctu.edu.blogAPI.dto.request.BlogAccessRequest;
 import ctu.edu.blogAPI.dto.request.BlogCreateRequest;
 import ctu.edu.blogAPI.dto.request.BlogUpdateRequest;
-import ctu.edu.blogAPI.dto.response.BlogAccessResponse;
-import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
-import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
-import ctu.edu.blogAPI.dto.response.BlogCreateResponse;
+import ctu.edu.blogAPI.dto.response.*;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.mapper.BlogMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
@@ -15,8 +13,10 @@ import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -25,7 +25,9 @@ public class BlogService {
 
     private final BlogRepository blogRepository;
 
-    private final FileUpload fileUpload;
+    private final CloudinaryService cloudinaryService;
+
+    private final UserService userService;
     //ver1
 //    public Blog initBlog(CreateBlogRequest request, ObjectId userId) {
 //        Blog blog = Blog.builder()
@@ -46,14 +48,18 @@ public class BlogService {
         List<String> failedFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
-                successUrls.add(fileUpload.uploadFile(file));
+                successUrls.add(cloudinaryService.uploadFile(file));
             } catch (Exception e) {
                 failedFiles.add(file.getOriginalFilename());
             }
         }
 
+        UserResponse currentUser = userService.getUser(request.getUserId());
+
         Blog blog = Blog.builder()
                 .userId(new ObjectId(request.getUserId())) // convert String -> ObjectId
+                .userName(currentUser.getUsername())
+                .userAvatarUrl(currentUser.getUserAvatarUrl())
                 .content(request.getContent())
                 .imageContentUrls(successUrls)
                 .published(request.isPublished())
@@ -116,13 +122,13 @@ public class BlogService {
                 .orElseThrow(()-> new RuntimeException("Blog not found"));
 
         blog.setContent(request.getContent());
-        List<MultipartFile> files = request.getFiles() != null ? request.getFiles() : List.of(); //get file or create empty file
+        List<MultipartFile> files = request.getNewImages() != null ? List.of(request.getNewImages()) : List.of(); //get file or create empty file
         List<String> successUrls = new ArrayList<>();
         List<String> failedFiles = new ArrayList<>();
         if(files!=null){
             for (MultipartFile file : files) {
                 try {
-                    successUrls.add(fileUpload.uploadFile(file));
+                    successUrls.add(cloudinaryService.uploadFile(file));
                 } catch (Exception e) {
                     failedFiles.add(file.getOriginalFilename());
                 }
@@ -130,21 +136,101 @@ public class BlogService {
         }
         blog.setUpdateAt(Instant.now());
         blog.setImageContentUrls(successUrls);
-        blogRepository.save(blog);
+        blogRepository.save(blog); // sẽ ghi đè dữ liệu
 
         return BlogUpdateResponse.builder()
                 .blogId(blog.getId().toString())
                 .content(blog.getContent())
 //                .files(blog.getImageContentUrls())
                 .successUrls(successUrls)
-                .failedFiles(failedFiles)
+                .failedUploadFiles(failedFiles)
                 .updateAt(blog.getUpdateAt())
                 .build();
     }
+
     //Delete blog bt blogId
     public void deleteBlog(String blogId) {
         Blog blog = blogRepository.findById(new ObjectId(blogId))
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
         blogRepository.delete(blog);
+    }
+
+    public BlogUpdateResponse updateBlog (BlogUpdateRequest request) throws IOException {
+        Blog blog = blogRepository.findById(new ObjectId(request.getBlogId()))
+                .orElseThrow(()-> new RuntimeException("Blog not found")); //Print result to test
+
+        Blog preBlog = new Blog(blog);
+
+        if(request.getContent()!=null){
+            blog.setContent(request.getContent()); // cho phép xóa khi client gửi ""
+        }
+
+        if (request.getPublished()!=null){
+            blog.setPublished(request.getPublished());
+        }
+
+
+        List<String> failDeleteUrl = new ArrayList<>();
+        List<String> failUploadUrl = new ArrayList<>();
+        List<String> successUrl = new ArrayList<>();
+        //delete old Image
+//        Toán tử bạn dùng là || (hoặc) — tức là nếu vế đầu sai (null), Java vẫn sẽ kiểm tra vế sau,
+//và lúc này request.getRemoveImagesUrl() đang là null, nên gọi .isEmpty() → lỗi NullPointerException.
+//        | Dù vế đầu null, vẫn kiểm tra vế sau → crash | Chỉ kiểm tra vế sau nếu vế đầu khác null |
+        if(request.getRemoveImagesUrl()!=null && !request.getRemoveImagesUrl().isEmpty()){
+            List<String> removeUrls = new ArrayList<>(request.getRemoveImagesUrl());
+//            blog.getImageContentUrls().removeAll(removeUrls);
+            for(String url: removeUrls) {
+                try {
+                    if(cloudinaryService.deleteFile(url)) {
+                        blog.getImageContentUrls().remove(url);
+                    }
+                }catch (IOException e) {
+                    failDeleteUrl.add(url);
+                }
+            }
+        }
+
+        //add new image
+        List<MultipartFile> newFiles = new ArrayList<>();
+
+        //Nếu request.getNewImages() là null → Arrays.stream(null) sẽ nổ lỗi ngay. "Cannot read the array length because "array" is null"
+        if (request.getNewImages() != null && request.getNewImages().length > 0) {
+            newFiles = Arrays.stream(request.getNewImages()).toList();
+        }
+
+        if(newFiles!=null && !newFiles.isEmpty()) {
+            for (MultipartFile file: newFiles){
+                try {
+                    successUrl.add(cloudinaryService.uploadFile(file));
+                } catch (Exception e) {
+                    failUploadUrl.add(file.getOriginalFilename());
+                }
+            }
+
+            List<String> currentImages = blog.getImageContentUrls();
+            if (currentImages == null) {
+                currentImages = new ArrayList<>();
+            }
+            currentImages.addAll(successUrl);
+            blog.setImageContentUrls(currentImages);
+        }
+
+
+        //ChangeStatus
+        if (!preBlog.equals(blog)){
+            blog.setUpdateAt(Instant.now());
+        }
+
+        blogRepository.save(blog);
+        return BlogUpdateResponse.builder()
+                .blogId(blog.getId().toString())
+                .content(blog.getContent())
+                .successUrls(blog.getImageContentUrls())
+                .failedDeleteFiles(failDeleteUrl)
+                .failedUploadFiles(failUploadUrl)
+                .published(blog.isPublished())
+                .updateAt(blog.getUpdateAt())
+                .build();
     }
 }
