@@ -54,8 +54,8 @@ public class UserController {
         return userService.getUser(userId);
     }
     // tìm user theo id lấy vè username,fullname, dob, userAvatarUrl;
-    @GetMapping("/{userId}")
-    UserResponsePatch getUserPtach(@PathVariable("userId") String userId) {
+    @GetMapping("patch/{userId}")
+    UserResponsePatch getUserPatch(@PathVariable("userId") String userId) {
         return userService.getUserPatch(userId);
     }
 
