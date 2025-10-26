@@ -1,7 +1,6 @@
 package ctu.edu.blogAPI.dto.response;
 
 import lombok.*;
-import org.bson.types.ObjectId;
 
 import java.time.Instant;
 import java.util.List;
