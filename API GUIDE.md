@@ -18,7 +18,6 @@ http://localhost:8080/v3/api-docs.yaml
 ### Backend
 Run code and go to: http://localhost:8080/swagger-ui/index.html to test API
 
-
 ### Create file
 
 **Method 1**
@@ -34,3 +33,16 @@ npm install @openapitools/openapi-generator-cli -g
 openapi-generator-cli generate -i openapi.json -g markdown -o docs/
 
 ```
+
+**Method 3**
+```bash
+curl http://localhost:8080/v3/api-docs -o openapi.json
+npx widdershins openapi.json -o README.md
+```
+
+**Method 4**
+```bash
+mvn springdoc-openapi:generate
+```
+cre: https://springdoc.org/#migrating-from-springdoc-v1
+cre: https://zudoku.dev/

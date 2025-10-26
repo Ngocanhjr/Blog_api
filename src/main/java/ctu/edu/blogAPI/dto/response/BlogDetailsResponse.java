@@ -16,6 +16,8 @@ public class BlogDetailsResponse {
 
     private String userName;
 
+    private String userAvatarUrl;
+
     private String content;
 
     private List<String> imageUrls;

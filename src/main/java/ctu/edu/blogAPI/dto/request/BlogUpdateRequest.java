@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //@Getter
@@ -15,5 +16,9 @@ public class BlogUpdateRequest {
 
     private String content;
 
-    private List<MultipartFile> files;
+    private MultipartFile[] newImages;
+
+    private List<String> removeImagesUrl = new ArrayList<>();
+
+    private Boolean published; // dùng wrapper để check null
 }

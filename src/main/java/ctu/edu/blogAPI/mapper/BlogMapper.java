@@ -23,6 +23,7 @@ public class BlogMapper {
 //                .userId(blog.getUserId().toString())
                 .userId(blog.getUserId() != null ? blog.getUserId().toString() : null)
                 .userName(blog.getUserName())
+                .userAvatarUrl(blog.getUserAvatarUrl())
 //                .userName(blog.getUserName() != null ? blog.getAuthor().getUsername() : null)
                 .content(blog.getContent())
                 .imageUrls(blog.getImageContentUrls())
@@ -63,5 +64,11 @@ public class BlogMapper {
                 .updateAt(blog.getUpdateAt())
                 .build();
     }
+
+//    public static BlogUpdateResponse toBlogUpdateResponse(Blog blog) {
+//        if (blog == null)
+//            return null;
+//
+//    }
 
 }
