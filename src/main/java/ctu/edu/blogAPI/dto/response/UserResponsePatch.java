@@ -1,9 +1,6 @@
-package ctu.edu.blogAPI.entities;
+package ctu.edu.blogAPI.dto.response;
 
 import java.time.LocalDate;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,20 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Document(collection = "user")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
-    @Id
-
-    String id; // dùng String để MongoDB tự sinh ObjectId
+public class UserResponsePatch {
     String username;
-    String password;
     String fullname;
     LocalDate dob;
     String userAvatarUrl;
-
 }

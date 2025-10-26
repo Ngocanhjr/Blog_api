@@ -14,10 +14,11 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRespone {
+public class UserResponse {
     String id;
     String username;
     String password;
     String fullname;
     LocalDate dob;
+    String userAvatarUrl;
 }
