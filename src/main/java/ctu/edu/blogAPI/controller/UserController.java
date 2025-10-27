@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,13 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequest;
-import ctu.edu.blogAPI.dto.response.UserRespone;
+import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
+import ctu.edu.blogAPI.dto.response.UserResponse;
+import ctu.edu.blogAPI.dto.response.UserResponsePatch;
 import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController // là một annotation dùng để đánh dấu một lớp là Web Controller, nghĩa là lớp
                 // này sẽ nhận các request từ client (HTTP request) và trả về response (HTML,
@@ -33,7 +37,7 @@ public class UserController {
 
     // tạo user
     @PostMapping("/sign-up")
-    User createUsuer(@RequestBody @Valid UserCreationRequest request) {
+    UserResponse createUsuer(@RequestBody @Valid UserCreationRequest request) {
         return userService.createUser(request);
     }
 
@@ -45,14 +49,22 @@ public class UserController {
 
     // tìm user theo id
     @GetMapping("/{userId}")
-    UserRespone getUser(@PathVariable("userId") String userId) {
+    UserResponse getUser(@PathVariable("userId") String userId) {
         return userService.getUser(userId);
     }
 
     @PutMapping("/{userId}")
     // câp nhập thông tin user dựa trên userId
-    UserRespone updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return userService.updateUser(userId, request);
+    }
+
+    // câp nhập thông tin user dựa trên userId
+    @PatchMapping("/{userId}")
+    public UserResponsePatch updateUserPartially(
+            @PathVariable String userId,
+            @Valid @RequestBody UserUpdateRequestPatch request) {
+        return userService.updateUserPartially(userId, request);
     }
 
     @DeleteMapping("/{userId}")

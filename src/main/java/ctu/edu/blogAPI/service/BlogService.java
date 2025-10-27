@@ -4,10 +4,7 @@ import ctu.edu.blogAPI.dto.BlogDTO;
 import ctu.edu.blogAPI.dto.request.BlogAccessRequest;
 import ctu.edu.blogAPI.dto.request.BlogCreateRequest;
 import ctu.edu.blogAPI.dto.request.BlogUpdateRequest;
-import ctu.edu.blogAPI.dto.response.BlogAccessResponse;
-import ctu.edu.blogAPI.dto.response.BlogCreateResponse;
-import ctu.edu.blogAPI.dto.response.BlogDetailsResponse;
-import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
+import ctu.edu.blogAPI.dto.response.*;
 import ctu.edu.blogAPI.entities.Blog;
 import ctu.edu.blogAPI.mapper.BlogMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
@@ -29,6 +26,8 @@ public class BlogService {
     private final BlogRepository blogRepository;
 
     private final CloudinaryService cloudinaryService;
+
+    private final UserService userService;
     //ver1
 //    public Blog initBlog(CreateBlogRequest request, ObjectId userId) {
 //        Blog blog = Blog.builder()
@@ -55,8 +54,12 @@ public class BlogService {
             }
         }
 
+        UserResponse currentUser = userService.getUser(request.getUserId());
+
         Blog blog = Blog.builder()
                 .userId(new ObjectId(request.getUserId())) // convert String -> ObjectId
+                .userName(currentUser.getUsername())
+                .userAvatarUrl(currentUser.getUserAvatarUrl())
                 .content(request.getContent())
                 .imageContentUrls(successUrls)
                 .published(request.isPublished())
