@@ -46,3 +46,7 @@ mvn springdoc-openapi:generate
 ```
 cre: https://springdoc.org/#migrating-from-springdoc-v1
 cre: https://zudoku.dev/
+
+
+docker-compose build
+docker-compose up
