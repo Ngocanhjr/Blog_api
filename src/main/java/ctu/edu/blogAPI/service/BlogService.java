@@ -152,6 +152,19 @@ public class BlogService {
     public void deleteBlog(String blogId) {
         Blog blog = blogRepository.findById(new ObjectId(blogId))
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
+
+        List<String> files = blog.getImageContentUrls();
+
+        for(String file: files){
+            try {
+                if(cloudinaryService.deleteFile(file)){
+                    System.out.println("dl");
+                }
+            } catch (IOException e) {
+                System.out.println(file + " can not delete!");
+                throw new RuntimeException(e);
+            }
+        }
         blogRepository.delete(blog);
     }
 
