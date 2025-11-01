@@ -3,6 +3,9 @@ package ctu.edu.blogAPI.dto.request;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,13 +24,23 @@ public class UserCreationRequest {
     @Size(min = 3, message = "username must be at least 3 character!!!")
     String username;
 
+
     @NotBlank(message = "Mật khẩu không được để trống")
     @Size(min = 8, message = "password must be at least 8 character!!!")
-
+    @Pattern(
+        regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).+$",
+        message = "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt"
+    )
     String password;
-    @NotBlank(message = "Tên tài khoản không được để trống")
-    @Size(min = 3, message = "username must be at least 3 character!!!")
+
+
+    @NotNull(message = "Họ tên không được để trống")
     String fullname;
+    
+    
+    @Past(message = "Ngày sinh phải nhỏ hơn ngày hiện tại")
     LocalDate dob;
+
+    String userAvatarUrl;
     
 }
