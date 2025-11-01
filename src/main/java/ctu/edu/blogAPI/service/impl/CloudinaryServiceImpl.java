@@ -28,6 +28,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     public boolean deleteFile(String imgUrl) throws IOException {
         String publicId = extractPublicId(imgUrl);
         Map result = cloudinary.uploader().destroy(publicId, Map.of());
+        System.out.println(result.get("result") + "  | " + imgUrl);
         return "ok".equals(result.get("result"));
     }
 

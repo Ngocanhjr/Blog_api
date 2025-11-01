@@ -1,29 +1,25 @@
 package ctu.edu.blogAPI.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.management.RuntimeErrorException;
-
-import org.apache.http.HttpStatus;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
-import lombok.RequiredArgsConstructor;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
-import ctu.edu.blogAPI.dto.request.UserUpdateRequest; // <-- nhớ import
+import ctu.edu.blogAPI.dto.request.UserUpdateRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
 import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
 import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.mapper.UserMapper;
 import ctu.edu.blogAPI.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.apache.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +30,7 @@ public class UserService {
   UserMapper userMapper; // final -> được inject qua constructor
   private final PasswordEncoder passwordEncoder; // final -> được inject qua constructor
   CloudinaryService cloudinaryService; // <-- thêm dependency này (tạo bean như bạn đã cấu hình Cloudinary)
-
+  SyncUserAndBlog syncUserAndBlog;
 
   public UserResponse createUser(UserCreationRequest request) {
     if (userRepository.existsByUsername(request.getUsername()))
@@ -50,18 +46,14 @@ public class UserService {
     return userMapper.toUserResponse(savedUser);
   }
 
-  public List<UserResponse> getUsers() {
-    return userMapper.toResponsesList(userRepository.findAll());
-  }
-
   // lấy user theo id (bạn đang gọi hàm này ở updateUser)
   public UserResponse getUser(String id) {
     return userMapper.toUserResponse(userRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("User not found")));
   }
-  public UserResponsePatch getUserPatch(String id) {
-    return userMapper.toResponsePatch(userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found")));
+
+  public List<UserResponse> getUsers() {
+    return userMapper.toResponsesList(userRepository.findAll());
   }
   // update theo id (dùng MapStruct để bỏ qua null)
   // public UserRespone updateUser(String userId, UserUpdateRequest request) {
@@ -101,7 +93,8 @@ public class UserService {
     // user.setUserAvatarUrl(req.getUserAvatarUrl());
     userMapper.updateUserPartial(user, req); // MapStruct tự bỏ qua field null
     userRepository.save(user);
-
+    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId,req.getUsername());
+    System.out.println(updateUsername + " username");
     return userMapper.toResponsePatch(user); // <— tên hàm đã chuẩn hóa
   }
 
@@ -111,32 +104,13 @@ public class UserService {
     }
     userRepository.deleteById(userId);
   }
-  
-  
 
-   //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
-   // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
+  //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
+  // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
 
-  public UserResponsePatch updateAvatar(String userId, MultipartFile file) throws IOException {
-    if (file == null || file.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "Avatar file is empty", null);
-    }
-
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
-
-    // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
-    String folder = "avatars/" + userId;
-    String url = cloudinaryService.uploadAvatar(file, userId);
-    user.setUserAvatarUrl(url);
-    userRepository.save(user);
-
-    return UserResponsePatch.builder()
-        .username(user.getUsername())
-        .fullname(user.getFullname())
-        .dob(user.getDob())
-        .userAvatarUrl(user.getUserAvatarUrl())
-        .build();
+  public UserResponsePatch getUserPatch(String id) {
+    return userMapper.toResponsePatch(userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found")));
   }
 
 
@@ -155,4 +129,29 @@ public class UserService {
   //   return userMapper.toResponsePatch(user);
   // }
 
+  public UserResponsePatch updateAvatar(String userId, MultipartFile file) throws IOException {
+    if (file == null || file.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "Avatar file is empty", null);
+    }
+
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+
+    // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
+    String folder = "avatars/" + userId;
+    String url = cloudinaryService.uploadAvatar(file, userId);
+    user.setUserAvatarUrl(url);
+    userRepository.save(user);
+
+    //by Rhna: khi nao cap nhap avt thi goi ham nay
+    Long avtUpdate = syncUserAndBlog.syncUserAvtToBlog(userId, url);
+
+    System.out.println(avtUpdate + " Rhna");
+    return UserResponsePatch.builder()
+            .username(user.getUsername())
+            .fullname(user.getFullname())
+            .dob(user.getDob())
+            .userAvatarUrl(user.getUserAvatarUrl())
+            .build();
+  }
 }
