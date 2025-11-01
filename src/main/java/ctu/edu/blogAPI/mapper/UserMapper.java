@@ -1,5 +1,7 @@
 package ctu.edu.blogAPI.mapper;
 
+import java.util.List;
+
 import org.mapstruct.*;
 
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
@@ -31,4 +33,6 @@ public interface UserMapper {
 
     // Entity -> Response (cho PATCH)
     UserResponsePatch toResponsePatch(User user);
+
+    List<UserResponse> toResponsesList(List<User> users);
 }

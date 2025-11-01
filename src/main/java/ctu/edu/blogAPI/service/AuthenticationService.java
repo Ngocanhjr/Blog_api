@@ -21,21 +21,32 @@ public class AuthenticationService {
     UserRepository userRepository;
 
     public AuthenticationResponse authentication(AuthenticationRequest request) {
-        var user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeErrorException(null, "tai khoan ko ton tai"));
-
+        var user = userRepository.findByUsername(request.getUsername());
+        // .orElseThrow(() -> new RuntimeErrorException(null, "tai khoan ko ton tai"));
+        if (user.isEmpty()) {
+            // 404 - tài khoản không tồn tại
+            return AuthenticationResponse.builder()
+                    .authentication(false)
+                    .message("Tài khoản không tồn tại")
+                    .build();
+        }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean ok = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        boolean ok = passwordEncoder.matches(request.getPassword(), user.get().getPassword());
 
         if (!ok) {
-            return AuthenticationResponse.builder().authentication(false).build();
+            // 401 - mật khẩu sai
+            return AuthenticationResponse.builder()
+                    .authentication(false)
+                    .message("Mật khẩu sai")
+                    .build();
         }
 
         return AuthenticationResponse.builder()
                 .authentication(true)
+                .message("Đăng nhập thành công")
                 .user(LoginUserResponse.builder()
-                        .id(user.getId())
-                        .username(user.getUsername())
+                        .id(user.get().getId())
+                        .username(user.get().getUsername())
                         .build())
                 .build();
     }
