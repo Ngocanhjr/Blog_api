@@ -14,6 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements CloudinaryService {
     private final Cloudinary cloudinary;
+
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
         return cloudinary.uploader()
@@ -31,9 +32,34 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     private String extractPublicId(String imgUrl) {
-        //"http://res.cloudinary.com/drwznlrbn/image/upload/v1761314005/550d5e1b-4626-4942-a095-1c14d7d0758d.jpg"
+        // "http://res.cloudinary.com/drwznlrbn/image/upload/v1761314005/550d5e1b-4626-4942-a095-1c14d7d0758d.jpg"
         String fileName = imgUrl.substring(imgUrl.lastIndexOf("/") + 1);
         System.out.println("Public Id: " + fileName.substring(0, fileName.lastIndexOf(".")));
         return fileName.substring(0, fileName.lastIndexOf("."));
+    }
+
+    /**
+     * @author Le Hieu
+     */
+    // @Override
+    // public String uploadAvatar(MultipartFile file, String userId) {
+    // // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'uploadAvatar'");
+    // }
+
+    @Override
+    public String uploadAvatar(MultipartFile file, String userId) throws IOException {
+        // đưa avatar vào thư mục theo user + public_id ổn định (ghi đè)
+        String publicId = "avatars/" + userId + "/avatar";
+        Map<?, ?> res = cloudinary.uploader().upload(
+                file.getBytes(),
+                Map.of(
+                        "public_id", publicId,
+                        "folder", "avatars/" + userId,
+                        "overwrite", true,
+                        "unique_filename", false,
+                        "resource_type", "image"));
+        return res.get("secure_url").toString(); // nên dùng secure_url
     }
 }
