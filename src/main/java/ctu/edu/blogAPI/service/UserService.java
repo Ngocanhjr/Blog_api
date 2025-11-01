@@ -140,13 +140,14 @@ public class UserService {
     // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
     String folder = "avatars/" + userId;
     String url = cloudinaryService.uploadAvatar(file, userId);
+    // String urlString = cloudinaryService.uploadFile(file);
     user.setUserAvatarUrl(url);
     userRepository.save(user);
 
-    //by Rhna: khi nao cap nhap avt thi goi ham nay
-    Long avtUpdate = syncUserAndBlog.syncUserAvtToBlog(userId, url);
+    // khi nao cap nhap avt thi goi ham nay
+    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
 
-    System.out.println(avtUpdate + " Rhna");
+    System.out.println(avtUpdateAll + " avatar updated in blogs");
     return UserResponsePatch.builder()
             .username(user.getUsername())
             .fullname(user.getFullname())
