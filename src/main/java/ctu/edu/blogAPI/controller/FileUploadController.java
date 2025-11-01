@@ -4,10 +4,7 @@ import ctu.edu.blogAPI.service.impl.CloudinaryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -77,5 +74,27 @@ public class FileUploadController {
         response.put("failed", failedFiles);
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<Map<String, Object>> deleteFiles(@RequestParam("imgUrl") String imgUrl){
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            boolean deleted = cloudinaryService.deleteFile(imgUrl);
+            if(deleted){
+                response.put("success", true);
+                response.put("message", "File deleted successfully");
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            } else{
+                response.put("success", false);
+                response.put("message", "File not found or already deleted");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        }catch (IOException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }
