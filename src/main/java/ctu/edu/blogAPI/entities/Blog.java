@@ -41,10 +41,10 @@ public class Blog {
     private boolean published = true;
 
     @CreatedDate
-    private Instant createAt;
+    private Instant createdAt;
 
     @LastModifiedDate
-    private  Instant updateAt;
+    private  Instant updatedAt;
 
     //Người repost là duy nhất
     private Set<ObjectId> repostOf;
