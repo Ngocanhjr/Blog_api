@@ -105,6 +105,16 @@ public class UserService {
     userRepository.deleteById(userId);
   }
 
+  public void deleteAvatar(String userId) {
+    if (!userRepository.existsById(userId)) {
+      throw new IllegalArgumentException("User not found"); // hoặc NotFoundException tự định nghĩa
+    }
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+    user.setUserAvatarUrl(null);
+    userRepository.save(user);
+  }
+
   //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
   // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
 
