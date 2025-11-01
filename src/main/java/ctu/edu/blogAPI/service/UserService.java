@@ -41,7 +41,8 @@ public class UserService {
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     // lưu DB -> nhận về entity đã có id, timestamps...
     User savedUser = userRepository.save(user);
-    user.setUserAvatarUrl("http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
     userRepository.save(user);
     // entity -> response để trả ra ngoài
     return userMapper.toUserResponse(savedUser);
@@ -112,8 +113,15 @@ public class UserService {
     }
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
-    user.setUserAvatarUrl("http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+
+    // userRepository.save(user);
+    String url = user.getUserAvatarUrl();
+    // khi nao cap nhap avt thi goi ham nay
+    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
     userRepository.save(user);
+
   }
 
   // Upload file avatar lên Cloudinary, nhận secure_url và lưu vào
