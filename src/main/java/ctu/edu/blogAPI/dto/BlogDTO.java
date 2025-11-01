@@ -32,5 +32,5 @@ public class BlogDTO {
 
     private Instant createdAt;
 
-    private  Instant updateAt;
+    private  Instant updatedAt;
 }
