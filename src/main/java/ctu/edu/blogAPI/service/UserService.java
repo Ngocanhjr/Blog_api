@@ -1,9 +1,13 @@
 package ctu.edu.blogAPI.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
+import ctu.edu.blogAPI.dto.request.updata;
+import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
+import ctu.edu.blogAPI.service.impl.CloudinaryServiceImpl;
 import org.apache.http.HttpStatus;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -104,4 +108,20 @@ public class UserService {
     }
     userRepository.deleteById(userId);
   }
+
+
+  //update avt
+  CloudinaryService cloudinaryService;
+    public String updateAvt(updata request) throws IOException {
+      User user = userRepository.findById(request.getUserId())
+              .orElseThrow(() -> new RuntimeException("User not found"));
+
+      try {
+        user.setUserAvatarUrl(cloudinaryService.uploadFile(request.getFile()));
+        userRepository.save(user);
+        return "Success";
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
 }
