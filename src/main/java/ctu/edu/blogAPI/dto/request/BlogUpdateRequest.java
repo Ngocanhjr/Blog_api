@@ -2,13 +2,11 @@ package ctu.edu.blogAPI.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-//@Getter
 @Builder
 @Data
 public class BlogUpdateRequest {
