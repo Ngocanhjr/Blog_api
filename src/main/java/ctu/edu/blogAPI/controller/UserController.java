@@ -66,16 +66,4 @@ public class UserController {
         userService.deleteUser(userId);
         return "User has been deleted.";
     }
-
-    // câp nhập avt
-    @PutMapping(value = "avt", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> updateAvt(@ModelAttribute updata request) {
-        try {
-            String updated = userService.updateAvt(request);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-
-    }
 }
