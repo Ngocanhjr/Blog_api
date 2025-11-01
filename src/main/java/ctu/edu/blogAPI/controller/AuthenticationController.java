@@ -1,7 +1,5 @@
 package ctu.edu.blogAPI.controller;
 
-import org.apache.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,10 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ctu.edu.blogAPI.dto.request.AuthenticationRequest;
-import ctu.edu.blogAPI.dto.response.ApiResponse;
 import ctu.edu.blogAPI.dto.response.AuthenticationResponse;
 import ctu.edu.blogAPI.service.AuthenticationService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +38,19 @@ public class AuthenticationController {
     // public boolean login(@RequestBody @Valid AuthenticationRequest request) {
     // return authenticationService.authentication(request);
     // }
-    @PostMapping("/log-in")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
-        var res = authenticationService.authentication(request);
-        return res.getAuthentication()
-                ? ResponseEntity.ok(res) // 200 { success:true, user:{id,username} }
-                : ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(res); // 401 { success:false, user:null }
-    }
+    // @PostMapping("/log-in")
+    // ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
+    //     var res = authenticationService.authentication(request);
+    //     return res.getAuthentication()
+    //             ? ResponseEntity.ok(res) // 200 { success:true, user:{id,username} }
+    //             : ResponseEntity.status(HttpStatus.SC_UNAUTHORIZED).body(res); // 401 { success:false, user:null }
+    // }
 
+
+    @PostMapping("/log-in")
+    AuthenticationResponse loginNoResp(@RequestBody @Valid AuthenticationRequest request) {
+        return authenticationService.authentication(request);
+    }
     // // API login có lưu session để FE (React) giữ trạng thái đăng nhập
     // @PostMapping("/loginv2")
     // public ApiResponse<Boolean> login(@RequestBody @Valid AuthenticationRequest

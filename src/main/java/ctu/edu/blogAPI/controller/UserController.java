@@ -1,22 +1,21 @@
 package ctu.edu.blogAPI.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import ctu.edu.blogAPI.dto.request.*;
-import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import ctu.edu.blogAPI.dto.request.UserCreationRequest;
+import ctu.edu.blogAPI.dto.request.UserUpdateRequest;
+import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
 import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
-import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController // là một annotation dùng để đánh dấu một lớp là Web Controller, nghĩa là lớp
@@ -36,7 +35,7 @@ public class UserController {
 
     @GetMapping
     // lấy all các user
-    List<User> getUList() {
+    List<UserResponse> getUList() {
         return userService.getUsers();
     }
 
@@ -44,6 +43,12 @@ public class UserController {
     @GetMapping("/{userId}")
     UserResponse getUser(@PathVariable("userId") String userId) {
         return userService.getUser(userId);
+    }
+
+    // tìm user theo id lấy vè username,fullname, dob, userAvatarUrl;
+    @GetMapping("patch/{userId}")
+    UserResponsePatch getUserPatch(@PathVariable("userId") String userId) {
+        return userService.getUserPatch(userId);
     }
 
     @PutMapping("/{userId}")
@@ -66,4 +71,13 @@ public class UserController {
         userService.deleteUser(userId);
         return "User has been deleted.";
     }
+
+    // Cập nhật avatar cho user theo id (upload file -> Cloudinary -> update DB)
+    @PatchMapping("/{id}/avatar")
+    public ResponseEntity<UserResponsePatch> updateAvatar(@PathVariable String id, @RequestPart("file") MultipartFile file) throws IOException {
+
+        UserResponsePatch res = userService.updateAvatar(id, file);
+        return ResponseEntity.ok(res);
+    }
+
 }

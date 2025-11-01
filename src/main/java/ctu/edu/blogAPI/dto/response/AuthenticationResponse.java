@@ -15,4 +15,5 @@ import lombok.experimental.FieldDefaults;
 public class AuthenticationResponse {
     Boolean authentication; // kiểm tra user có cung cấp mk đúng hay chưa
     LoginUserResponse user;
+    String message;
 }
