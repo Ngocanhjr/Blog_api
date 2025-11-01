@@ -27,9 +27,6 @@ public class Blog {
 
     private String userAvatarUrl;
 
-//    @DBRef
-//    private User author;
-
     private String content;
 
     //vì ảnh có thể trùng, có thứ tự
@@ -58,7 +55,6 @@ public class Blog {
 
     public Blog(Blog blog) {
     }
-
 
     //List Comment
 }

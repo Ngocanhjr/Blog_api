@@ -1,14 +1,14 @@
 package ctu.edu.blogAPI.service.impl;
 
 import com.cloudinary.Cloudinary;
+import ctu.edu.blogAPI.dto.FileResult;
 import ctu.edu.blogAPI.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,21 @@ public class CloudinaryServiceImpl implements CloudinaryService {
                         Map.of("public_id", UUID.randomUUID().toString()))
                 .get("url")
                 .toString();
+    }
+
+    public FileResult uploadFiles(List<MultipartFile> files){
+        List<String> successUrls = new ArrayList<>();
+        List<String> failedFiles = new ArrayList<>();
+        for (MultipartFile file : files) {
+            try {
+                successUrls.add(uploadFile(file));
+            } catch (Exception e) {
+                failedFiles.add(file.getOriginalFilename());
+            }
+        }
+
+
+        return new FileResult(successUrls, failedFiles);
     }
 
     @Override
