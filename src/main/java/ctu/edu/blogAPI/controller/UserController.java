@@ -1,35 +1,21 @@
 package ctu.edu.blogAPI.controller;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import ctu.edu.blogAPI.dto.request.UserCreationRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequest;
 import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
 import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
-import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.service.UserService;
-import io.swagger.v3.oas.models.media.MediaType;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController // là một annotation dùng để đánh dấu một lớp là Web Controller, nghĩa là lớp
@@ -58,6 +44,7 @@ public class UserController {
     UserResponse getUser(@PathVariable("userId") String userId) {
         return userService.getUser(userId);
     }
+
     // tìm user theo id lấy vè username,fullname, dob, userAvatarUrl;
     @GetMapping("patch/{userId}")
     UserResponsePatch getUserPatch(@PathVariable("userId") String userId) {
@@ -85,7 +72,7 @@ public class UserController {
         return "User has been deleted.";
     }
 
-     // Cập nhật avatar cho user theo id (upload file -> Cloudinary -> update DB)
+    // Cập nhật avatar cho user theo id (upload file -> Cloudinary -> update DB)
     @PatchMapping("/{id}/avatar")
     public ResponseEntity<UserResponsePatch> updateAvatar(@PathVariable String id, @RequestPart("file") MultipartFile file) throws IOException {
 
