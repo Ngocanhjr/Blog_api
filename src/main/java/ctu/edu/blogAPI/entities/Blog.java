@@ -1,9 +1,6 @@
 package ctu.edu.blogAPI.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -14,10 +11,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
+@Setter
 @Document(collection = "blogs") //Dùng cho MongoDB để ánh xạ lớp Java thành tài liệu (document) trong collection MongoDB. - xem nó như là 1 cái table trong DBMS
 public class Blog {
     @Id
@@ -58,6 +56,8 @@ public class Blog {
 
     private Set<ObjectId> sharers;
 
+    public Blog(Blog blog) {
+    }
 
 
     //List Comment

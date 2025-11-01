@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
 @Data // khai all hàm get,set,ToString
 @Builder // khởi tạo object theo kiểu xâu chuỗi, dễ đọc – không cần viết constructor dài
          // hay gọi nhiều setter.
@@ -18,14 +17,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor // tạo constructor với tất cả field theo thứ tự khai báo.
 @FieldDefaults(level = AccessLevel.PRIVATE) // ko cần khai khai báo các phạm vi của biến
 
-public class UserUpdateRequest {
+public class UserUpdateRequestPatch {
     @NotBlank(message = "Tên tài khoản không được để trống")
     @Size(min = 3, message = "username must be at least 3 character!!!")
     String username;
-
-    @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 8, message = "password must be at least 8 character!!!")
-    String password;
 
     String fullname;
 

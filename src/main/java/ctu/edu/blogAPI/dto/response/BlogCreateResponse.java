@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateBlogResponse {
+public class BlogCreateResponse {
     private String blogId; //Response trả về sẽ là một chuỗi
 
     private List<String> successUrls;
