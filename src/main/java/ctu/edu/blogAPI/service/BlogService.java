@@ -10,6 +10,11 @@ import ctu.edu.blogAPI.mapper.BlogMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -152,6 +157,19 @@ public class BlogService {
     public void deleteBlog(String blogId) {
         Blog blog = blogRepository.findById(new ObjectId(blogId))
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
+
+        List<String> files = blog.getImageContentUrls();
+
+        for(String file: files){
+            try {
+                if(cloudinaryService.deleteFile(file)){
+                    System.out.println("dl");
+                }
+            } catch (IOException e) {
+                System.out.println(file + " can not delete!");
+                throw new RuntimeException(e);
+            }
+        }
         blogRepository.delete(blog);
     }
 
