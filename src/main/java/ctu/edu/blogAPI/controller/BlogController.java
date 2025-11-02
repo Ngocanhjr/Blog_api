@@ -9,6 +9,7 @@ import ctu.edu.blogAPI.dto.response.BlogCreateResponse;
 import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
 import ctu.edu.blogAPI.repository.UserRepository;
 import ctu.edu.blogAPI.service.BlogService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,12 +22,12 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 //@CrossOrigin(origins = "*")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class BlogController {
 
-    @Autowired
-    private BlogService blogService;
-    UserRepository userRepository;
+    private final BlogService blogService;
+    private final UserRepository userRepository;
 
     //Get all blog to new feed - public blog
     @GetMapping("/soulspaces")
