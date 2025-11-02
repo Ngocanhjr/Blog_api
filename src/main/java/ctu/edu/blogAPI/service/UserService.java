@@ -41,7 +41,9 @@ public class UserService {
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     // lưu DB -> nhận về entity đã có id, timestamps...
     User savedUser = userRepository.save(user);
-
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+    userRepository.save(user);
     // entity -> response để trả ra ngoài
     return userMapper.toUserResponse(savedUser);
   }
@@ -93,7 +95,7 @@ public class UserService {
     // user.setUserAvatarUrl(req.getUserAvatarUrl());
     userMapper.updateUserPartial(user, req); // MapStruct tự bỏ qua field null
     userRepository.save(user);
-    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId,req.getUsername());
+    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId, req.getUsername());
     System.out.println(updateUsername + " username");
     return userMapper.toResponsePatch(user); // <— tên hàm đã chuẩn hóa
   }
@@ -110,33 +112,42 @@ public class UserService {
       throw new IllegalArgumentException("User not found"); // hoặc NotFoundException tự định nghĩa
     }
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
-    user.setUserAvatarUrl(null);
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+
+    // userRepository.save(user);
+    String url = user.getUserAvatarUrl();
+    // khi nao cap nhap avt thi goi ham nay
+    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
     userRepository.save(user);
+
   }
 
-  //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
+  // Upload file avatar lên Cloudinary, nhận secure_url và lưu vào
+  // user.userAvatarUrl
   // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
 
   public UserResponsePatch getUserPatch(String id) {
     return userMapper.toResponsePatch(userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found")));
+        .orElseThrow(() -> new RuntimeException("User not found")));
   }
 
-
-  //  //Nếu avatar đã có URL sẵn (không upload Cloudinary).
+  // //Nếu avatar đã có URL sẵn (không upload Cloudinary).
   // public UserResponsePatch updateAvatarUrl(String userId, String avatarUrl) {
-  //   if (avatarUrl == null || avatarUrl.isBlank()) {
-  //     throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "avatarUrl is required", null);
-  //   }
+  // if (avatarUrl == null || avatarUrl.isBlank()) {
+  // throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "avatarUrl is
+  // required", null);
+  // }
 
-  //   User user = userRepository.findById(userId)
-  //       .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+  // User user = userRepository.findById(userId)
+  // .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User
+  // not found", null));
 
-  //   user.setUserAvatarUrl(avatarUrl);
-  //   userRepository.save(user);
+  // user.setUserAvatarUrl(avatarUrl);
+  // userRepository.save(user);
 
-  //   return userMapper.toResponsePatch(user);
+  // return userMapper.toResponsePatch(user);
   // }
 
   public UserResponsePatch updateAvatar(String userId, MultipartFile file) throws IOException {
@@ -145,7 +156,7 @@ public class UserService {
     }
 
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
 
     // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
     String folder = "avatars/" + userId;
@@ -159,10 +170,10 @@ public class UserService {
 
     System.out.println(avtUpdateAll + " avatar updated in blogs");
     return UserResponsePatch.builder()
-            .username(user.getUsername())
-            .fullname(user.getFullname())
-            .dob(user.getDob())
-            .userAvatarUrl(user.getUserAvatarUrl())
-            .build();
+        .username(user.getUsername())
+        .fullname(user.getFullname())
+        .dob(user.getDob())
+        .userAvatarUrl(user.getUserAvatarUrl())
+        .build();
   }
 }
