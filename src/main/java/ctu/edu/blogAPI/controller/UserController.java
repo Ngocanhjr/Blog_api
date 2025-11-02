@@ -72,6 +72,13 @@ public class UserController {
         return "User has been deleted.";
     }
 
+    // Xóa avatar của user theo id
+    @DeleteMapping("/{id}/avatar")
+    public ResponseEntity<String> deleteAvatar(@PathVariable String id) {
+        userService.deleteAvatar(id);
+        return ResponseEntity.ok("Avatar has been deleted.");
+    }
+
     // Cập nhật avatar cho user theo id (upload file -> Cloudinary -> update DB)
     @PatchMapping("/{id}/avatar")
     public ResponseEntity<UserResponsePatch> updateAvatar(@PathVariable String id, @RequestPart("file") MultipartFile file) throws IOException {

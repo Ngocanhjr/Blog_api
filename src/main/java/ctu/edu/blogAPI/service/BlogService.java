@@ -46,14 +46,18 @@ public class BlogService {
 
         Blog blog = blogsMapper.toBlog(request);
 
+
+        blog.setImageContentUrls(fileResult.getSuccessUrls());
         blog.setUserName(currentUser.getUsername());
         blog.setUserAvatarUrl(currentUser.getUserAvatarUrl());
+        blog.setCreatedAt(Instant.now());
+        blog.setUpdatedAt(Instant.now());
 
         Blog saved = blogRepository.save(blog);
 
         return BlogCreateResponse.builder()
                 .blogId(saved.getId().toString())
-                .successUrls(fileResult.getSuccessUrls())
+                .successUrls(saved.getImageContentUrls())
                 .failedFiles(fileResult.getFailedFiles())
                 .build();
     }
@@ -96,7 +100,7 @@ public class BlogService {
                 .orElseThrow(()->new RuntimeException("Blog not found"));
 
         blog.setPublished(request.isPublished());
-        blog.setUpdateAt(Instant.now());
+        blog.setUpdatedAt(Instant.now());
         blogRepository.save(blog);
 
         return blogsMapper.toBlogAccessResponse(blog);
@@ -107,10 +111,12 @@ public class BlogService {
         Blog blog = blogRepository.findById(new ObjectId(blogId))
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
 
-        List<String> files = blog.getImageContentUrls();
+        List<String> files = blog.getImageContentUrls() != null ? blog.getImageContentUrls() : List.of();
 
-        List<String> fileResult = deleteFile(files);
-        System.out.println(fileResult);
+        if (files != null) {
+            List<String> fileResult = deleteFile(files);
+            System.out.println(fileResult);
+        }
 
         blogRepository.delete(blog);
     }
@@ -176,7 +182,7 @@ public class BlogService {
 
         //ChangeStatus
         if (updated || !failDeleteUrl.isEmpty() || !fileResult.getSuccessUrls().isEmpty()) {
-            blog.setUpdateAt(Instant.now());
+            blog.setUpdatedAt(Instant.now());
         }
 
         blogRepository.save(blog);
@@ -187,7 +193,7 @@ public class BlogService {
                 .failedDeleteFiles(failDeleteUrl)
                 .failedUploadFiles(fileResult.getFailedFiles())
                 .published(blog.isPublished())
-                .updateAt(blog.getUpdateAt())
+                .updatedAt(blog.getUpdatedAt())
                 .build();
     }
 
@@ -232,7 +238,7 @@ public class BlogService {
         blog.setContent(request.getContent());
         List<MultipartFile> files = request.getNewImages() != null ? List.of(request.getNewImages()) : List.of();
         FileResult fileResult = uploadFile(files);
-        blog.setUpdateAt(Instant.now());
+        blog.setUpdatedAt(Instant.now());
         blog.setImageContentUrls(fileResult.getSuccessUrls());
         blogRepository.save(blog); // sẽ ghi đè dữ liệu
 
@@ -241,7 +247,7 @@ public class BlogService {
                 .content(blog.getContent())
                 .successUrls(fileResult.getSuccessUrls())
                 .failedUploadFiles(fileResult.getFailedFiles())
-                .updateAt(blog.getUpdateAt())
+                .updatedAt(blog.getUpdatedAt())
                 .build();
     }
 }

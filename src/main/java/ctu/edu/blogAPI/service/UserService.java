@@ -105,6 +105,16 @@ public class UserService {
     userRepository.deleteById(userId);
   }
 
+  public void deleteAvatar(String userId) {
+    if (!userRepository.existsById(userId)) {
+      throw new IllegalArgumentException("User not found"); // hoặc NotFoundException tự định nghĩa
+    }
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+    user.setUserAvatarUrl(null);
+    userRepository.save(user);
+  }
+
   //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
   // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
 
@@ -140,13 +150,14 @@ public class UserService {
     // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
     String folder = "avatars/" + userId;
     String url = cloudinaryService.uploadAvatar(file, userId);
+    // String urlString = cloudinaryService.uploadFile(file);
     user.setUserAvatarUrl(url);
     userRepository.save(user);
 
-    //by Rhna: khi nao cap nhap avt thi goi ham nay
-    Long avtUpdate = syncUserAndBlog.syncUserAvtToBlog(userId, url);
+    // khi nao cap nhap avt thi goi ham nay
+    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
 
-    System.out.println(avtUpdate + " Rhna");
+    System.out.println(avtUpdateAll + " avatar updated in blogs");
     return UserResponsePatch.builder()
             .username(user.getUsername())
             .fullname(user.getFullname())
