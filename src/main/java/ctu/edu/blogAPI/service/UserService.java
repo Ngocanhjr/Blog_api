@@ -113,6 +113,11 @@ public class UserService {
     }
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+    String defaultAvatar = "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg";
+    // If there's no avatar or it's already the default, nothing to delete
+    if (user.getUserAvatarUrl() == null || user.getUserAvatarUrl().equals(defaultAvatar)) {
+      throw new RuntimeException("ko thể xóa avatar mặc định hoặc avatar trống");
+    }
     user.setUserAvatarUrl(
         "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
 
