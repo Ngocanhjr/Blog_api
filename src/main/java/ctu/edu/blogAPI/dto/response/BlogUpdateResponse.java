@@ -25,5 +25,5 @@ public class BlogUpdateResponse {
 
     private Boolean published;
 
-    private Instant updateAt;
+    private Instant updatedAt;
 }

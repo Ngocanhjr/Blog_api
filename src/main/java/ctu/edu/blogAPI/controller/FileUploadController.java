@@ -1,5 +1,6 @@
 package ctu.edu.blogAPI.controller;
 
+import ctu.edu.blogAPI.dto.FileResult;
 import ctu.edu.blogAPI.service.impl.CloudinaryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,20 +35,6 @@ public class FileUploadController {
         }
     }
 
-    //Nếu 1 file lỗi API trả về lỗi 500 ngay lập tức, reject tất cả f
-//    @PostMapping("/uploadFiles")
-//    public ResponseEntity<List<String>> uploadFiles(@RequestParam(value = "files",required = false) List<MultipartFile> files) throws IOException{
-//        if(files == null || files.isEmpty()){
-//            return ResponseEntity.badRequest().body(Collections.emptyList());
-//        }
-//
-//        List<String> uploadUrls = new ArrayList<>();
-//        for(MultipartFile file: files){
-//            uploadUrls.add(cloudinaryService.uploadFile(file));
-//        }
-//        return ResponseEntity.ok(uploadUrls);
-//    }
-
     @PostMapping("/uploadFiles")
     public ResponseEntity<Map<String, Object>> uploadFiles(@RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
         if (files == null || files.isEmpty()) {
@@ -58,21 +44,11 @@ public class FileUploadController {
             ));
         }
 
-        List<String> successUrls = new ArrayList<>();
-        List<String> failedFiles = new ArrayList<>();
-        for (MultipartFile file : files) {
-            try {
-                successUrls.add(cloudinaryService.uploadFile(file));
-            } catch (Exception e) {
-                failedFiles.add(file.getOriginalFilename());
-            }
-        }
-
+        FileResult rs = cloudinaryService.uploadFiles(files);
         Map<String, Object> response = new HashMap<>();
-        response.put("success", failedFiles.isEmpty());
-        response.put("uploaded", successUrls);
-        response.put("failed", failedFiles);
-
+        response.put("success", rs.getFailedFiles().isEmpty());
+        response.put("uploaded", rs.getSuccessUrls());
+        response.put("failed", rs.getFailedFiles());
         return ResponseEntity.ok(response);
     }
 

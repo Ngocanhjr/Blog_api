@@ -27,9 +27,6 @@ public class Blog {
 
     private String userAvatarUrl;
 
-//    @DBRef
-//    private User author;
-
     private String content;
 
     //vì ảnh có thể trùng, có thứ tự
@@ -44,10 +41,10 @@ public class Blog {
     private boolean published = true;
 
     @CreatedDate
-    private Instant createAt;
+    private Instant createdAt;
 
     @LastModifiedDate
-    private  Instant updateAt;
+    private  Instant updatedAt;
 
     //Người repost là duy nhất
     private Set<ObjectId> repostOf;
@@ -58,7 +55,6 @@ public class Blog {
 
     public Blog(Blog blog) {
     }
-
 
     //List Comment
 }
