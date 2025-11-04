@@ -2,7 +2,6 @@ package ctu.edu.blogAPI.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import org.bson.types.ObjectId;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,7 +13,7 @@ public class BlogDTO {
 
     private String userId;
 
-    private String userName;
+    private String username;
 
     private String userAvatarUrl;
 
@@ -22,11 +21,11 @@ public class BlogDTO {
 
     private List<String> imageContentUrls;
 
-    private Long likeCount;
+    private Long likesCount;
 
-    private Long commentCount;
+    private Long commentsCount;
 
-    private Long shareCount;
+    private Long sharesCount;
     
     private boolean published = true;
 

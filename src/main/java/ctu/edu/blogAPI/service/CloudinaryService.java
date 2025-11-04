@@ -11,7 +11,7 @@ public interface CloudinaryService {
     String uploadFile(MultipartFile multipartFile) throws IOException;
 
     //upload multi File
-    public FileResult uploadFiles(List<MultipartFile> files);
+    FileResult uploadFiles(List<MultipartFile> files);
 
     //delete file
     boolean deleteFile(String file) throws IOException;

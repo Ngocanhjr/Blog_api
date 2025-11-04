@@ -50,3 +50,29 @@ cre: https://zudoku.dev/
 
 docker-compose build
 docker-compose up
+
+---
+Cập nhật collection cũ
+
+```bash
+db.blogs.updateMany(
+   // 1. Điều kiện tìm kiếm:
+   // Tìm tất cả các document KHÔNG có trường "author" (tức là document cũ)
+   { "author": { "$exists": false } },
+
+   // 2. Hành động cập nhật:
+   [ // Sử dụng pipeline để di chuyển trường
+     {
+       "$set": {
+         "author": {
+           "username": "$userName", // Copy giá trị từ userName cấp 1
+           "userAvatarUrl": "$userAvatarUrl" // Copy giá trị từ userAvatarUrl cấp 1
+         }
+       }
+     },
+     {
+       "$unset": [ "userName", "userAvatarUrl" ] // Xóa 2 trường cũ ở cấp 1
+     }
+   ]
+)
+```
