@@ -7,17 +7,17 @@ import ctu.edu.blogAPI.dto.request.BlogUpdateRequest;
 import ctu.edu.blogAPI.dto.response.BlogAccessResponse;
 import ctu.edu.blogAPI.dto.response.BlogCreateResponse;
 import ctu.edu.blogAPI.dto.response.BlogUpdateResponse;
-import ctu.edu.blogAPI.repository.UserRepository;
 import ctu.edu.blogAPI.service.BlogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+
+import static ctu.edu.blogAPI.constants.BlogsConstants.*;
 
 @CrossOrigin(origins = "http://localhost:5173")
 //@CrossOrigin(origins = "*")
@@ -27,7 +27,6 @@ import java.util.Map;
 public class BlogController {
 
     private final BlogService blogService;
-    private final UserRepository userRepository;
 
     //Get all blog to new feed - public blog
     @GetMapping("/soulspaces")
@@ -51,18 +50,13 @@ public class BlogController {
     @GetMapping("/blogs/{blogId}")
     public ResponseEntity<BlogDTO> getBlogDetails(@PathVariable String blogId) {
         BlogDTO response = blogService.getBlogDetails(blogId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     //Create new blogs
     @PostMapping(value = "/blogs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BlogCreateResponse> createBlog(
             @ModelAttribute BlogCreateRequest request) {
-        // Check user already exist in database
-        if (!userRepository.existsById(request.getUserId())) {
-            throw new RuntimeException("User not found with id: " + request.getUserId());
-        }
-
         BlogCreateResponse response = blogService.initBlog(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -76,22 +70,14 @@ public class BlogController {
 
     @DeleteMapping("/blogs/{blogId}")
     public ResponseEntity<String> deleteBlog(@PathVariable String blogId) {
-        //check role before delete
-//        if (!blog.getUserId().equals(currentUserId)) {
-//            throw new UnauthorizedException("Bạn không có quyền sửa/xoá bài viết này");
-//        }
         blogService.deleteBlog(blogId);
-        return ResponseEntity.ok("Blog deleted successfully");
+        return ResponseEntity.ok(SUCCESS_DELETE_BLOG);
     }
 
     @PatchMapping(value = "blogs-details", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> updatePost(@ModelAttribute BlogUpdateRequest request) {
-        try {
+    public ResponseEntity<?> updatePost(@ModelAttribute BlogUpdateRequest request) throws IOException {
             BlogUpdateResponse updated = blogService.updateBlog(request);
             return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
     }
 
 }
