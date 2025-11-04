@@ -27,7 +27,7 @@ public class AuthenticationService {
             // 404 - tài khoản không tồn tại
             return AuthenticationResponse.builder()
                     .authentication(false)
-                    .message("Tài khoản không tồn tại")
+                    .message("Account does not exist")
                     .build();
         }
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -37,13 +37,13 @@ public class AuthenticationService {
             // 401 - mật khẩu sai
             return AuthenticationResponse.builder()
                     .authentication(false)
-                    .message("Mật khẩu sai")
+                    .message("Wrong password")
                     .build();
         }
 
         return AuthenticationResponse.builder()
                 .authentication(true)
-                .message("Đăng nhập thành công")
+                .message("Log in successfully")
                 .user(LoginUserResponse.builder()
                         .id(user.get().getId())
                         .username(user.get().getUsername())
