@@ -8,10 +8,15 @@ import java.util.List;
 
 public interface BlogRepository extends MongoRepository<Blog, ObjectId> {
     List<Blog> findByUserId(ObjectId userId);
+
     List<Blog> findByPublishedTrue();
 
     List<Blog> findByUserIdAndPublishedTrue(ObjectId userId);
-//    List<Post> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
-//    List<Post> findByAuthorOrderByCreatedAtDesc(User author);
-//    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    // List<Post> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
+    // List<Post> findByAuthorOrderByCreatedAtDesc(User author);
+    // Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // Delete blogs by userId
+    // LH thêm
+    long deleteByUserId(ObjectId userId); // <- thêm dòng này
 }
