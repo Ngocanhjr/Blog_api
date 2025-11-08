@@ -57,13 +57,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     /**
      * @author Le Hieu
      */
-    // @Override
-    // public String uploadAvatar(MultipartFile file, String userId) {
-    // // TODO Auto-generated method stub
-    // throw new UnsupportedOperationException("Unimplemented method
-    // 'uploadAvatar'");
-    // }
-
     @Override
     public String uploadAvatar(MultipartFile file, String userId) throws IOException {
         // đưa avatar vào thư mục theo user + public_id ổn định (ghi đè)
@@ -78,4 +71,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
                         "resource_type", "image"));
         return res.get("secure_url").toString(); // nên dùng secure_url
     }
+
+
+    
+
 }
