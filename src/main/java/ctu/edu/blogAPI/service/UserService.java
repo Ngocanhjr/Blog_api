@@ -7,16 +7,19 @@ import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
 import ctu.edu.blogAPI.entities.User;
 import ctu.edu.blogAPI.mapper.UserMapper;
+import ctu.edu.blogAPI.repository.BlogRepository;
 import ctu.edu.blogAPI.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.http.HttpStatus;
+import org.bson.types.ObjectId;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.bson.types.ObjectId;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +34,9 @@ public class UserService {
   private final PasswordEncoder passwordEncoder; // final -> được inject qua constructor
   CloudinaryService cloudinaryService; // <-- thêm dependency này (tạo bean như bạn đã cấu hình Cloudinary)
   SyncUserAndBlog syncUserAndBlog;
+  private final BlogRepository blogRepository;
 
+  // tạo user mới
   public UserResponse createUser(UserCreationRequest request) {
     if (userRepository.existsByUsername(request.getUsername()))
       throw new RuntimeException("user existed!!!");
@@ -41,7 +46,9 @@ public class UserService {
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     // lưu DB -> nhận về entity đã có id, timestamps...
     User savedUser = userRepository.save(user);
-
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+    userRepository.save(user);
     // entity -> response để trả ra ngoài
     return userMapper.toUserResponse(savedUser);
   }
@@ -52,6 +59,7 @@ public class UserService {
         .orElseThrow(() -> new RuntimeException("User not found")));
   }
 
+  // lấy tất cả user
   public List<UserResponse> getUsers() {
     return userMapper.toResponsesList(userRepository.findAll());
   }
@@ -64,6 +72,7 @@ public class UserService {
   // return userMapper.toUserRespone(userRepository.save(user));
   // }
 
+  // cập nhật user (toàn bộ field, bỏ qua null)
   public UserResponse updateUser(String userId, UserUpdateRequest request) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found"));
@@ -81,6 +90,7 @@ public class UserService {
     return userMapper.toUserResponse(userRepository.save(user));
   }
 
+  // cập nhật user với patch (chỉ một số field, bỏ qua null)
   public UserResponsePatch updateUserPartially(String userId, UserUpdateRequestPatch req) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
@@ -93,65 +103,76 @@ public class UserService {
     // user.setUserAvatarUrl(req.getUserAvatarUrl());
     userMapper.updateUserPartial(user, req); // MapStruct tự bỏ qua field null
     userRepository.save(user);
-    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId,req.getUsername());
+    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId, req.getUsername());
     System.out.println(updateUsername + " username");
     return userMapper.toResponsePatch(user); // <— tên hàm đã chuẩn hóa
   }
 
+  // xóa user theo id
   public void deleteUser(String userId) {
     if (!userRepository.existsById(userId)) {
       throw new IllegalArgumentException("User not found"); // hoặc NotFoundException tự định nghĩa
     }
+    ObjectId uid = new ObjectId(userId);
+
+    // 1) xoá tất cả blog của user
+    blogRepository.deleteByUserId(uid);
+     
+    // 2) xoá user
     userRepository.deleteById(userId);
   }
 
+  // xóa avatar (set về default avatar)
   public void deleteAvatar(String userId) {
     if (!userRepository.existsById(userId)) {
       throw new IllegalArgumentException("User not found"); // hoặc NotFoundException tự định nghĩa
     }
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
-    user.setUserAvatarUrl(null);
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+    String defaultAvatar = "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg";
+    // If there's no avatar or it's already the default, nothing to delete
+    if (user.getUserAvatarUrl() == null || user.getUserAvatarUrl().equals(defaultAvatar)) {
+      throw new RuntimeException("Cannot delete default avatar or blank avatar");
+    }
+    user.setUserAvatarUrl(
+        "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg");
+
+    // userRepository.save(user);
+    String url = user.getUserAvatarUrl();
+    // khi nao cap nhap avt thi goi ham nay
+    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
     userRepository.save(user);
+
   }
 
-  //Upload file avatar lên Cloudinary, nhận secure_url và lưu vào user.userAvatarUrl
+  // Upload file avatar lên Cloudinary, nhận secure_url và lưu vào
+  // user.userAvatarUrl
   // Giống cách NA lưu Blog.imgUrls (Cloudinary URL).
 
+  // Lấy thông tin user để hiển thị chỉnh sửa (patch)
   public UserResponsePatch getUserPatch(String id) {
     return userMapper.toResponsePatch(userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found")));
+        .orElseThrow(() -> new RuntimeException("User not found")));
   }
 
-
-  //  //Nếu avatar đã có URL sẵn (không upload Cloudinary).
-  // public UserResponsePatch updateAvatarUrl(String userId, String avatarUrl) {
-  //   if (avatarUrl == null || avatarUrl.isBlank()) {
-  //     throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "avatarUrl is required", null);
-  //   }
-
-  //   User user = userRepository.findById(userId)
-  //       .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
-
-  //   user.setUserAvatarUrl(avatarUrl);
-  //   userRepository.save(user);
-
-  //   return userMapper.toResponsePatch(user);
-  // }
-
+  // Upload avatar file
   public UserResponsePatch updateAvatar(String userId, MultipartFile file) throws IOException {
     if (file == null || file.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.SC_BAD_REQUEST, "Avatar file is empty", null);
     }
 
     User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.SC_NOT_FOUND, "User not found", null));
 
     // folder đề xuất: avatars/{userId}; có thể force public_id cố định để ghi đè
     String folder = "avatars/" + userId;
     String url = cloudinaryService.uploadAvatar(file, userId);
     // String urlString = cloudinaryService.uploadFile(file);
     user.setUserAvatarUrl(url);
+    // user.setUserAvatarUrl(
+    // "http://res.cloudinary.com/drwznlrbn/image/upload/v1762008409/9db2e9f0-8423-481e-8bd6-e2f911e15097.jpg"
+    // + url);
+
     userRepository.save(user);
 
     // khi nao cap nhap avt thi goi ham nay
@@ -159,10 +180,10 @@ public class UserService {
 
     System.out.println(avtUpdateAll + " avatar updated in blogs");
     return UserResponsePatch.builder()
-            .username(user.getUsername())
-            .fullname(user.getFullname())
-            .dob(user.getDob())
-            .userAvatarUrl(user.getUserAvatarUrl())
-            .build();
+        .username(user.getUsername())
+        .fullname(user.getFullname())
+        .dob(user.getDob())
+        .userAvatarUrl(user.getUserAvatarUrl())
+        .build();
   }
 }

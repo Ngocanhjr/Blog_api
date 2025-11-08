@@ -78,6 +78,13 @@ public class UserController {
         userService.deleteAvatar(id);
         return ResponseEntity.ok("Avatar has been deleted.");
     }
+    
+    // @DeleteMapping("/{id}/cover-photo")
+    // // xóa cover photo của user theo id
+    // public String deleteAvatar(@PathVariable String Id) {
+    //     userService.deleteAvatar(Id);
+    //     return "Cover photo has been deleted.";
+    // }
 
     // Cập nhật avatar cho user theo id (upload file -> Cloudinary -> update DB)
     @PatchMapping("/{id}/avatar")

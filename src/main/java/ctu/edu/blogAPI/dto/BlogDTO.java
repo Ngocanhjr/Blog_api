@@ -27,7 +27,7 @@ public class BlogDTO {
     private Long commentCount;
 
     private Long shareCount;
-
+    
     private boolean published = true;
 
     private Instant createdAt;
