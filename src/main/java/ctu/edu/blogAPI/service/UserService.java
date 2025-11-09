@@ -35,6 +35,8 @@ public class UserService {
   private final PasswordEncoder passwordEncoder; // final -> được inject qua constructor
   CloudinaryService cloudinaryService; // <-- thêm dependency này (tạo bean như bạn đã cấu hình Cloudinary)
   BlogSyncService blogSyncService;
+  // SyncUserAndBlog syncUserAndBlog;
+  private final BlogRepository blogRepository;
 
   // tạo user mới
   public UserResponse createUser(UserCreationRequest request) {
