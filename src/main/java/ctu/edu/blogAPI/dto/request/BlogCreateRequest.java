@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class BlogCreateRequest {
     private String userId;
-    @Size(max = 5000, message = "vượt quá 5000 ký tự!!!")
+    @Size(max = 5000, message = "Exceed 5000 characters!!!")
     private String content;
     
     private boolean published = true;

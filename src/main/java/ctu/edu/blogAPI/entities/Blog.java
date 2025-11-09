@@ -23,9 +23,7 @@ public class Blog {
 
     private ObjectId userId;
 
-    private String userName;
-
-    private String userAvatarUrl;
+    private UserInfo author;
 
     private String content;
 

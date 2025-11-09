@@ -6,6 +6,7 @@ import ctu.edu.blogAPI.dto.request.UserUpdateRequestPatch;
 import ctu.edu.blogAPI.dto.response.UserResponse;
 import ctu.edu.blogAPI.dto.response.UserResponsePatch;
 import ctu.edu.blogAPI.entities.User;
+import ctu.edu.blogAPI.exception.UserNotFoundException;
 import ctu.edu.blogAPI.mapper.UserMapper;
 import ctu.edu.blogAPI.repository.BlogRepository;
 import ctu.edu.blogAPI.repository.UserRepository;
@@ -33,8 +34,7 @@ public class UserService {
   UserMapper userMapper; // final -> được inject qua constructor
   private final PasswordEncoder passwordEncoder; // final -> được inject qua constructor
   CloudinaryService cloudinaryService; // <-- thêm dependency này (tạo bean như bạn đã cấu hình Cloudinary)
-  SyncUserAndBlog syncUserAndBlog;
-  private final BlogRepository blogRepository;
+  BlogSyncService blogSyncService;
 
   // tạo user mới
   public UserResponse createUser(UserCreationRequest request) {
@@ -56,7 +56,7 @@ public class UserService {
   // lấy user theo id (bạn đang gọi hàm này ở updateUser)
   public UserResponse getUser(String id) {
     return userMapper.toUserResponse(userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found")));
+            .orElseThrow(() -> new UserNotFoundException("User not found")));
   }
 
   // lấy tất cả user
@@ -103,7 +103,7 @@ public class UserService {
     // user.setUserAvatarUrl(req.getUserAvatarUrl());
     userMapper.updateUserPartial(user, req); // MapStruct tự bỏ qua field null
     userRepository.save(user);
-    Long updateUsername = syncUserAndBlog.syncUsernameToBlog(userId, req.getUsername());
+    Long updateUsername = blogSyncService.syncUsernameToBlog(userId, req.getUsername());
     System.out.println(updateUsername + " username");
     return userMapper.toResponsePatch(user); // <— tên hàm đã chuẩn hóa
   }
@@ -140,7 +140,7 @@ public class UserService {
     // userRepository.save(user);
     String url = user.getUserAvatarUrl();
     // khi nao cap nhap avt thi goi ham nay
-    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
+    Long avtUpdateAll = blogSyncService.syncUserAvtToBlog(userId, url);
     userRepository.save(user);
 
   }
@@ -176,7 +176,7 @@ public class UserService {
     userRepository.save(user);
 
     // khi nao cap nhap avt thi goi ham nay
-    Long avtUpdateAll = syncUserAndBlog.syncUserAvtToBlog(userId, url);
+    Long avtUpdateAll = blogSyncService.syncUserAvtToBlog(userId, url);
 
     System.out.println(avtUpdateAll + " avatar updated in blogs");
     return UserResponsePatch.builder()
