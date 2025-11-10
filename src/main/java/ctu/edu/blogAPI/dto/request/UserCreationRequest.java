@@ -30,6 +30,8 @@ public class UserCreationRequest {
     @NotBlank(message = "Password cannot be blank")
     @Size(min = 8, message = "password must be at least 8 character!!!")
     @Pattern(regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).+$", message = "Password must contain at least 1 special character")
+    String password;
+
     @NotNull(message = "Full name cannot be left blank")
     String fullname;
 
