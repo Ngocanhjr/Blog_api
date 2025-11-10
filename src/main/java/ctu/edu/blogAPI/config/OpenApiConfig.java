@@ -36,5 +36,5 @@ import org.springframework.context.annotation.Configuration;
 //        description = "JWT Bearer token authentication"
 //)
 public class OpenApiConfig {
-    // Không cần thêm gì ở đây — chỉ khai báo annotation thôi
+
 }
