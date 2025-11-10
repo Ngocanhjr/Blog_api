@@ -1,6 +1,7 @@
 package ctu.edu.blogAPI.dto.request;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +12,9 @@ import java.util.List;
 @Builder
 public class BlogCreateRequest {
     private String userId;
-//    @Size(max = 10, message = "vượt quá 10 ký tự!!!")
+    @Size(max = 5000, message = "Exceed 5000 characters!!!")
     private String content;
-
+    
     private boolean published = true;
 
     @ArraySchema(

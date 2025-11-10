@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost:8080*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**authenicate**](AuthenticationControllerApi.md#authenicate) | **POST** /auth/log-in |  |
+| [**checkSession**](AuthenticationControllerApi.md#checkSession) | **GET** /auth/check-session |  |
 | [**login**](AuthenticationControllerApi.md#login) | **POST** /auth/login |  |
 
 
@@ -33,9 +34,31 @@ No authorization required
 - **Content-Type**: application/json
 - **Accept**: */*
 
+<a name="checkSession"></a>
+# **checkSession**
+> ApiResponseObject checkSession()
+
+
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**ApiResponseObject**](../Models/ApiResponseObject.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: */*
+
 <a name="login"></a>
 # **login**
-> Boolean login(AuthenticationRequest)
+> ApiResponseBoolean login(AuthenticationRequest)
 
 
 
@@ -47,7 +70,7 @@ No authorization required
 
 ### Return type
 
-**Boolean**
+[**ApiResponseBoolean**](../Models/ApiResponseBoolean.md)
 
 ### Authorization
 

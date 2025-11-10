@@ -14,10 +14,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRespone {
-    String id;
+public class UserResponsePatch {
     String username;
-    String password;
     String fullname;
     LocalDate dob;
+    String userAvatarUrl;
 }
