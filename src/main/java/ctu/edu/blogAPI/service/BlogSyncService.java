@@ -1,7 +1,6 @@
 package ctu.edu.blogAPI.service;
 
 import ctu.edu.blogAPI.entities.Blog;
-import ctu.edu.blogAPI.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -22,8 +21,6 @@ import static ctu.edu.blogAPI.constants.CloudinaryConstrants.SUCCESS_DELETE_FILE
 @RequiredArgsConstructor
 @Slf4j
 public class BlogSyncService {
-    private final BlogRepository blogRepository;
-
     private final CloudinaryService cloudinaryService;
 
     private final MongoTemplate mongoTemplate;
@@ -49,11 +46,11 @@ public class BlogSyncService {
     }
 
     public List<String> deleteAccountAndFile(List<String> files) {
-        List<String> fileResult = new ArrayList<>();
-
         if (files == null || files.isEmpty()) {
-            return fileResult;
+            return List.of();
         }
+
+        List<String> fileResult = new ArrayList<>();
 
         for (String file : files) {
             try {
