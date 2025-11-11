@@ -65,6 +65,9 @@ public class BlogService {
 
         blog.setUserId(new ObjectId(currentUser.getId()));
         blog.setAuthor(userInfo);
+        blog.setCommentsCount(0L);
+        blog.setLikesCount(0L);
+        blog.setSharesCount(0L);
         blog.setImageContentUrls(fileResult.getSuccessUrls());
         blog.setCreatedAt(Instant.now());
         blog.setUpdatedAt(Instant.now());
@@ -244,7 +247,7 @@ public class BlogService {
         for (String file : files) {
             try {
                 if (cloudinaryService.deleteFile(file)) {
-                    System.out.println("dl");
+                    log.info(SUCCESS_DELETE_FILE, file);
                 }
             } catch (IOException e) {
                 failDeleteUrl.add(file);
