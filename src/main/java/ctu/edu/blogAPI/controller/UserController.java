@@ -23,7 +23,7 @@ import java.util.List;
                 // JSON, v.v.).
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
     UserService userService;
 
