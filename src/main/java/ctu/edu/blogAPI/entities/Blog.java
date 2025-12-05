@@ -45,11 +45,11 @@ public class Blog {
     private  Instant updatedAt;
 
     //Người repost là duy nhất
-    private Set<ObjectId> repostOf;
-
-    private Set<ObjectId> likers;
-
-    private Set<ObjectId> sharers;
+//    private Set<ObjectId> repostOf;
+//
+//    private Set<ObjectId> likers;
+//
+//    private Set<ObjectId> sharers;
 
     public Blog(Blog blog) {
     }

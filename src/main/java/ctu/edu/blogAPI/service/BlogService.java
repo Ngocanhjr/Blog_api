@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -64,6 +65,9 @@ public class BlogService {
 
         blog.setUserId(new ObjectId(currentUser.getId()));
         blog.setAuthor(userInfo);
+        blog.setCommentsCount(0L);
+        blog.setLikesCount(0L);
+        blog.setSharesCount(0L);
         blog.setImageContentUrls(fileResult.getSuccessUrls());
         blog.setCreatedAt(Instant.now());
         blog.setUpdatedAt(Instant.now());
@@ -127,19 +131,23 @@ public class BlogService {
     }
 
     //Delete blog bt blogId
+    @Transactional
     public void deleteBlog(String blogId) {
         Blog blog = blogRepository.findById(new ObjectId(blogId))
                 .orElseThrow(() -> new BlogNotFoundException(ERROR_BLOG_NOT_FOUND));
 
         List<String> files = blog.getImageContentUrls() != null ? blog.getImageContentUrls() : List.of();
-        blogRepository.delete(blog);
+
         if (!files.isEmpty()) {
             List<String> fileResult = deleteFile(files);
-            if (!fileResult.isEmpty()) {
+            if (!fileResult.isEmpty()) { //Nếu có file xóa lỗi
                 log.warn(ERROR_DELETE_FILE_IN_BLOGS,
                         fileResult.size(), blogId, fileResult);
             }
         }
+
+        blogRepository.delete(blog);
+
     }
 
 
@@ -239,7 +247,7 @@ public class BlogService {
         for (String file : files) {
             try {
                 if (cloudinaryService.deleteFile(file)) {
-                    System.out.println("dl");
+                    log.info(SUCCESS_DELETE_FILE, file);
                 }
             } catch (IOException e) {
                 failDeleteUrl.add(file);
