@@ -1,7 +1,6 @@
 package ctu.edu.blogAPI.dto.response;
 
 import lombok.*;
-import org.bson.types.ObjectId;
 
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +15,8 @@ public class BlogDetailsResponse {
     private String userId;
 
     private String userName;
+
+    private String userAvatarUrl;
 
     private String content;
 
